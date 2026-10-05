@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">L'amour vrai</title>
+  <desc id="description">Um lírio vermelho abstrato sobre um céu escuro.</desc>
+  <defs>
+    <radialGradient id="sky" cx="68%" cy="18%" r="90%">
+      <stop offset="0" stop-color="#3c1723"/>
+      <stop offset=".48" stop-color="#170a10"/>
+      <stop offset="1" stop-color="#090507"/>
+    </radialGradient>
+    <linearGradient id="petal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f09bad"/>
+      <stop offset=".42" stop-color="#d7475f"/>
+      <stop offset="1" stop-color="#8f263d"/>
+    </linearGradient>
+    <linearGradient id="petalDark" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#681a2d"/>
+      <stop offset="1" stop-color="#d7475f"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#sky)"/>
+  <circle cx="256" cy="236" r="178" fill="none" stroke="#d5b78a" stroke-opacity=".12" stroke-width="2"/>
+  <circle cx="256" cy="236" r="126" fill="none" stroke="#d98a9a" stroke-opacity=".1"/>
+  <g filter="url(#glow)">
+    <path d="M258 279C220 243 206 184 248 105c44 57 47 118 10 174Z" fill="url(#petal)"/>
+    <path d="M247 286c-58-13-105-53-116-132 70 13 112 57 116 132Z" fill="url(#petalDark)"/>
+    <path d="M268 286c58-13 105-53 116-132-70 13-112 57-116 132Z" fill="url(#petal)"/>
+    <path d="M245 292c-49 12-89-3-116-47 55-8 96 7 116 47Z" fill="#a62f47"/>
+    <path d="M270 292c49 12 89-3 116-47-55-8-96 7-116 47Z" fill="#c13b54"/>
+  </g>
+  <path d="M257 272c-1 47 4 78 23 111" fill="none" stroke="#d5b78a" stroke-width="5" stroke-linecap="round"/>
+  <path d="M280 351c28-17 51-18 72-4-31 21-55 23-72 4Z" fill="#8f263d"/>
+  <circle cx="197" cy="104" r="4" fill="#f6ecee" opacity=".74"/>
+  <circle cx="366" cy="94" r="3" fill="#d5b78a" opacity=".78"/>
+  <circle cx="408" cy="215" r="2.5" fill="#d98a9a" opacity=".7"/>
+  <text x="256" y="437" fill="#f6ecee" font-family="Georgia, serif" font-size="38" font-style="italic" letter-spacing="9" text-anchor="middle">L V</text>
+</svg>

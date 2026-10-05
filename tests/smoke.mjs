@@ -23,6 +23,19 @@ page.on("console", message => {
 
 try {
   await page.goto("http://127.0.0.1:4175/", { waitUntil: "networkidle" });
+  const manifest = await page.evaluate(async () => {
+    const href = document.querySelector('link[rel="manifest"]')?.href;
+    if (!href) throw new Error("O manifest não foi ligado ao documento.");
+    const response = await fetch(href);
+    return response.json();
+  });
+  if (manifest.display !== "standalone" || !manifest.icons?.some(icon => icon.sizes === "512x512")) {
+    throw new Error("O manifest PWA não contém os requisitos de instalação.");
+  }
+  await page.evaluate(async () => {
+    if (!("serviceWorker" in navigator)) throw new Error("Service Worker indisponível.");
+    await navigator.serviceWorker.ready;
+  });
   await page.locator("#setup-panel").waitFor({ state: "visible" });
   await page.screenshot({ path: path.join(artifacts, "01-access.png"), fullPage: true });
 
@@ -74,6 +87,23 @@ try {
   await page.locator("#access-gate").waitFor({ state: "hidden" });
   await page.getByText("Pessoa A & Pessoa B", { exact: true }).first().waitFor();
 
+  const nativeInstallAvailable = await page.locator("html").evaluate(element => element.classList.contains("can-install"));
+  if (!nativeInstallAvailable) {
+    await page.locator("#install-app-footer").click();
+    await page.locator("#install-dialog").waitFor({ state: "visible" });
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: path.join(artifacts, "04-install-guide.png"), fullPage: false });
+    await page.getByRole("button", { name: "Entendi", exact: true }).click();
+  }
+
+  await page.reload({ waitUntil: "networkidle" });
+  await page.evaluate(async () => { await navigator.serviceWorker.ready; });
+  await context.setOffline(true);
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.locator("#app-shell").waitFor({ state: "visible" });
+  await page.getByText("Modo offline", { exact: true }).waitFor();
+  await context.setOffline(false);
+
   if (runtimeErrors.length) throw new Error(`Erros do navegador: ${runtimeErrors.join(" | ")}`);
 
   const mobileContext = await browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: "dark", isMobile: true });
@@ -90,7 +120,7 @@ try {
   await mobilePage.screenshot({ path: path.join(artifacts, "03-mobile.png"), fullPage: false });
   await mobileContext.close();
 
-  process.stdout.write("Fluxo validado: acesso, memória, sonho, carta, cápsula, bloqueio, desbloqueio e layout móvel.\n");
+  process.stdout.write("Fluxo validado: manifest, modo offline, acesso, memória, sonho, carta, cápsula, bloqueio, desbloqueio e layout móvel.\n");
 } finally {
   await browser.close();
 }

@@ -39,7 +39,10 @@
   border-radius: var(--radius-control);
   background: rgba(246, 236, 238, .025);
 }
+.connection-dot { width: 6px; height: 6px; flex: 0 0 auto; border-radius: 50%; background: #79ba8b; box-shadow: 0 0 12px rgba(121, 186, 139, .42); }
+.connection-dot.offline { background: var(--accent-gold); box-shadow: 0 0 12px rgba(213, 183, 138, .38); }
 .topbar-profile small { color: var(--text-tertiary); font-size: .62rem; }
+.topbar-profile small + small { padding-left: 8px; border-left: 1px solid var(--border-subtle); }
 .topbar-profile button { width: 28px; height: 28px; border: 0; border-radius: 50%; background: rgba(246, 236, 238, .06); color: var(--text-secondary); }
 .topbar-profile button:hover { background: rgba(215, 71, 95, .15); color: var(--text-primary); }
 
@@ -50,6 +53,29 @@
 .dream-empty p { max-width: 500px; margin: 10px auto 24px; color: var(--text-secondary); }
 .letter-page .letter-edit { margin-top: 24px; }
 #letter-body { white-space: pre-wrap; }
+
+.install-card { width: min(880px, calc(100vw - 28px)); max-height: calc(100dvh - 28px); overflow-y: auto; position: relative; padding: clamp(34px, 6vw, 72px); border: 1px solid var(--line-strong); border-radius: var(--radius-modal); background: radial-gradient(circle at 18% 0, rgba(215, 71, 95, .16), transparent 34%), var(--surface-2); box-shadow: var(--shadow-modal); }
+.install-card > h2 { max-width: 680px; margin-top: 15px; font-size: clamp(2.6rem, 6vw, 5.2rem); }
+.install-card > .modal-intro { max-width: 670px; }
+.install-icon { width: 76px; height: 76px; position: absolute; top: clamp(30px, 5vw, 58px); right: clamp(34px, 6vw, 72px); overflow: hidden; border: 1px solid var(--line-strong); border-radius: 22px; box-shadow: var(--glow-lily); }
+.install-icon img { width: 100%; height: 100%; object-fit: cover; }
+.install-platforms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 38px 0 22px; }
+.install-platforms section { padding: 26px; border: 1px solid var(--line); border-radius: var(--radius-card); background: rgba(246, 236, 238, .025); }
+.platform-number { color: var(--gold); font-size: .62rem; letter-spacing: .16em; }
+.install-platforms h3 { margin-top: 20px; font-size: 1.65rem; }
+.install-platforms ol { display: grid; gap: 9px; margin: 18px 0 0; padding-left: 20px; color: var(--muted); font-size: .82rem; }
+.install-footnote { margin-bottom: 24px; color: var(--faint); font-size: .7rem; }
+
+.update-banner { position: fixed; z-index: 950; right: 22px; bottom: 22px; width: min(560px, calc(100vw - 32px)); display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 14px; padding: 14px; border: 1px solid var(--line-strong); border-radius: 18px; background: rgba(24, 11, 17, .94); box-shadow: var(--shadow-floating); backdrop-filter: blur(22px); animation: update-enter var(--motion-slow) var(--ease-enter) both; }
+.update-banner[hidden] { display: none; }
+.update-symbol { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: rgba(215, 71, 95, .12); color: var(--rose); }
+.update-banner strong, .update-banner small { display: block; }
+.update-banner strong { font: 400 1rem/1.2 var(--serif); }
+.update-banner small { margin-top: 3px; color: var(--faint); font-size: .64rem; }
+.update-dismiss { width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: var(--muted); }
+@keyframes update-enter { from { opacity: 0; transform: translateY(16px) scale(.98); } }
+
+.is-offline .scroll-progress span { background: linear-gradient(90deg, var(--gold), var(--rose)); }
 
 @media (max-width: 920px) {
   .access-gate { grid-template-columns: 1fr; }
@@ -66,6 +92,11 @@
   .access-brand { margin-bottom: 34px; }
   .access-form { grid-template-columns: 1fr; }
   .access-form .full { grid-column: auto; }
+  .install-card { padding: 38px 22px 26px; }
+  .install-icon { position: static; margin-bottom: 30px; }
+  .install-platforms { grid-template-columns: 1fr; }
+  .update-banner { left: 12px; right: 12px; bottom: 88px; width: auto; grid-template-columns: auto 1fr auto; }
+  .update-banner .button { grid-column: 1 / -1; width: 100%; justify-content: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {

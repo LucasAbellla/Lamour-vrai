@@ -14,6 +14,7 @@ import { createLettersFeature } from "./features/letters/letters.js";
 import { createExperience } from "./features/experience.js";
 import { createFeedback } from "./ui/feedback.js";
 import { setupAtmosphere, setupDynamicMotion, setupRevealAndNavigation } from "./ui/motion.js";
+import { setupPwa } from "./pwa/pwa.js";
 
 assertEnvironment();
 
@@ -34,7 +35,6 @@ async function initializePrivateSpace(profile) {
   const dreams = createDreamsFeature({ store, feedback });
   const letters = createLettersFeature({ store, feedback, getProfile: () => currentProfile });
 
-  feedback.setupDialogs();
   memories.initialize();
   capsules.initialize();
   dreams.initialize();
@@ -64,4 +64,6 @@ async function initializePrivateSpace(profile) {
   document.documentElement.dataset.environment = environment.name;
 }
 
+feedback.setupDialogs();
+setupPwa({ feedback });
 setupAuthUI({ auth, onAuthenticated: initializePrivateSpace });

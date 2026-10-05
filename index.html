@@ -4,9 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b0709">
+  <meta name="color-scheme" content="dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="L'amour vrai">
   <meta name="description" content="L'amour vrai — um arquivo afetivo particular para guardar memórias, cartas e sonhos.">
   <title>L'amour vrai</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230b0709'/%3E%3Cpath d='M32 52C20 42 13 34 13 24c0-7 5-12 12-12 4 0 7 2 9 5 2-3 5-5 9-5 7 0 12 5 12 12 0 10-9 20-23 28Z' fill='%23d7475f'/%3E%3Cpath d='M32 45V18' stroke='%23f6ecee' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 </head>
 <body>
   <section class="access-gate" id="access-gate" aria-label="Acesso ao espaço particular">
@@ -66,7 +72,7 @@
         <a href="#futuro">Nosso futuro</a>
       </nav>
       <div class="topbar-actions">
-        <div class="topbar-profile"><small id="relationship-since">Nosso tempo</small><button type="button" id="lock-space" aria-label="Bloquear o espaço" title="Bloquear">⌁</button></div>
+        <div class="topbar-profile"><span class="connection-dot" id="connection-dot" aria-hidden="true"></span><small id="connection-status">Conectado</small><small id="relationship-since">Nosso tempo</small><button type="button" id="lock-space" aria-label="Bloquear o espaço" title="Bloquear">⌁</button></div>
         <button class="command-trigger" type="button" data-open-command aria-label="Abrir central rápida"><span>⌕</span><kbd>Ctrl K</kbd></button>
         <button class="button primary compact" type="button" data-open-memory><span>+</span> Guardar memória</button>
       </div>
@@ -263,6 +269,7 @@
     <footer>
       <div><span class="brand-mark" aria-hidden="true">LV</span><p><strong>L'amour vrai</strong><small>Um lugar particular de <span data-profile="couple-name">duas pessoas</span>.</small></p></div>
       <div class="backup-actions">
+        <button type="button" id="install-app-footer" data-install-app>Instalar no celular</button>
         <button type="button" id="export-data">Exportar backup</button>
         <label for="import-data">Importar backup</label>
         <input id="import-data" type="file" accept="application/json" hidden>
@@ -427,6 +434,7 @@
         <button type="button" data-command="constellation"><span>⁙</span><div><strong>Abrir nossa constelação</strong><small>Ver as estrelas formadas pelas memórias</small></div><kbd>E</kbd></button>
         <button type="button" data-command="story"><span>∞</span><div><strong>Revisitar o primeiro ano</strong><small>Abrir a experiência comemorativa</small></div><kbd>1</kbd></button>
         <button type="button" data-command="profile"><span>♡</span><div><strong>Detalhes do casal</strong><small>Nomes, data e frase particular</small></div><kbd>P</kbd></button>
+        <button type="button" data-command="install"><span>⇩</span><div><strong>Instalar no celular</strong><small>Ver o passo a passo para Android e iPhone</small></div><kbd>I</kbd></button>
         <button type="button" data-command="lock"><span>⌁</span><div><strong>Bloquear nosso espaço</strong><small>Esconder os dados particulares neste aparelho</small></div><kbd>L</kbd></button>
         <button type="button" data-command="backup"><span>↓</span><div><strong>Exportar backup</strong><small>Guardar uma cópia de tudo neste dispositivo</small></div><kbd>B</kbd></button>
       </div>
@@ -447,6 +455,37 @@
       <div class="story-controls"><small id="story-counter">01 / 04</small><button class="button secondary" type="button" id="story-next">Continuar →</button></div>
     </div>
   </dialog>
+
+  <dialog class="modal install-modal" id="install-dialog" aria-labelledby="install-title">
+    <article class="install-card">
+      <button class="modal-close" type="button" data-close-install aria-label="Fechar instruções">×</button>
+      <div class="install-icon" aria-hidden="true"><img src="./icons/icon-192.png" alt=""></div>
+      <p class="eyebrow">QUANDO CHEGAR A HORA</p>
+      <h2 id="install-title">Levar nosso espaço <em>para o celular.</em></h2>
+      <p class="modal-intro">A instalação ficará disponível quando a versão final estiver publicada em um endereço seguro. Nenhum conteúdo é enviado durante este passo a passo.</p>
+      <div class="install-platforms">
+        <section>
+          <span class="platform-number">01</span>
+          <h3>iPhone</h3>
+          <ol><li>Abra o endereço no Safari.</li><li>Toque em Compartilhar.</li><li>Escolha “Adicionar à Tela de Início”.</li><li>Ative “Abrir como App” e confirme.</li></ol>
+        </section>
+        <section>
+          <span class="platform-number">02</span>
+          <h3>Android</h3>
+          <ol><li>Abra o endereço no Chrome.</li><li>Toque no menu do navegador.</li><li>Escolha “Instalar app”.</li><li>Confirme o ícone na tela inicial.</li></ol>
+        </section>
+      </div>
+      <p class="install-footnote">Por enquanto, esta tela serve apenas para validar a experiência. A instalação real será feita quando todas as fases estiverem concluídas.</p>
+      <button class="button secondary" type="button" data-close-install>Entendi</button>
+    </article>
+  </dialog>
+
+  <aside class="update-banner" id="update-banner" hidden aria-live="polite">
+    <span class="update-symbol" aria-hidden="true">✦</span>
+    <div><strong>Uma nova versão está pronta.</strong><small>Atualize quando terminar o que está escrevendo.</small></div>
+    <button class="button primary compact" type="button" id="pwa-update-now">Atualizar agora</button>
+    <button class="update-dismiss" type="button" id="pwa-update-later" aria-label="Atualizar depois">×</button>
+  </aside>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script type="module" src="/src/main.js"></script>
