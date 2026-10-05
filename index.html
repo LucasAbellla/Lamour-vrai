@@ -26,28 +26,65 @@
     </div>
     <div class="access-panel">
       <div class="access-brand"><span class="brand-mark" aria-hidden="true">LV</span><span>L'amour vrai</span></div>
-      <article class="access-card" id="setup-panel">
+      <article class="access-card" id="signin-panel" hidden>
+        <p class="eyebrow">ACESSO SOMENTE POR CONVITE</p>
+        <h2>Um lugar que pertence <em>somente a vocês dois.</em></h2>
+        <p>Use um dos dois e-mails autorizados. Enviaremos um link de uso único e, depois, pediremos o código do autenticador.</p>
+        <form class="access-form" id="signin-form">
+          <label class="field full"><span>E-mail autorizado</span><input name="email" type="email" autocomplete="email" required placeholder="voce@exemplo.com"></label>
+          <p class="form-error full" id="signin-error" role="alert"></p>
+          <p class="form-success full" id="signin-success" role="status"></p>
+          <button class="button primary full" type="submit">Enviar link seguro</button>
+        </form>
+        <p class="access-note"><span>◇</span> Novas contas não podem ser criadas por esta tela. Só os dois convites preparados previamente entram.</p>
+      </article>
+      <article class="access-card" id="mfa-enroll-panel" hidden>
+        <p class="eyebrow">SEGUNDO FATOR OBRIGATÓRIO</p>
+        <h2>Proteja este acesso <em>com o autenticador.</em></h2>
+        <p>Leia o código com Google Authenticator, Microsoft Authenticator, 1Password ou outro aplicativo TOTP.</p>
+        <div class="mfa-setup">
+          <img id="mfa-qr" alt="Código QR para configurar o autenticador">
+          <div><small>CHAVE PARA DIGITAR MANUALMENTE</small><code id="mfa-secret"></code></div>
+        </div>
+        <form class="access-form" id="mfa-enroll-form">
+          <label class="field full"><span>Código de 6 números</span><input name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required></label>
+          <p class="form-error full" id="mfa-enroll-error" role="alert"></p>
+          <button class="button primary full" type="submit">Ativar e continuar</button>
+        </form>
+        <p class="access-note"><span>◇</span> Guarde a recuperação do autenticador separadamente. O cofre não abre sem esta etapa.</p>
+      </article>
+      <article class="access-card" id="mfa-challenge-panel" hidden>
+        <p class="eyebrow">CONFIRMAÇÃO EM DUAS ETAPAS</p>
+        <h2>Confirme que <em>é mesmo você.</em></h2>
+        <p>Abra o aplicativo autenticador configurado para o L'amour vrai e informe o código atual.</p>
+        <form class="access-form" id="mfa-challenge-form">
+          <label class="field full"><span>Código de 6 números</span><input name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required autofocus></label>
+          <p class="form-error full" id="mfa-challenge-error" role="alert"></p>
+          <button class="button primary full" type="submit">Verificar acesso</button>
+        </form>
+      </article>
+      <article class="access-card" id="setup-panel" hidden>
         <p class="eyebrow">PRIMEIRO ACESSO</p>
         <h2>Vamos preparar <em>o espaço de vocês.</em></h2>
-        <p>Esses dados ficam somente neste dispositivo nesta fase e só aparecem depois que o espaço é desbloqueado.</p>
+        <p id="setup-description">Esses dados ficam somente neste dispositivo e só aparecem depois que o espaço é desbloqueado.</p>
         <form class="access-form" id="setup-form">
           <label class="field"><span>Seu nome</span><input name="partnerOne" maxlength="40" autocomplete="off" required></label>
           <label class="field"><span>Nome de quem você ama</span><input name="partnerTwo" maxlength="40" autocomplete="off" required></label>
           <label class="field"><span>Como você chama essa pessoa?</span><input name="nickname" maxlength="60" placeholder="Ex.: meu amor"></label>
           <label class="field"><span>Quando tudo começou?</span><input name="relationshipStart" type="date" required></label>
           <label class="field full"><span>Uma frase que representa vocês</span><textarea name="dedication" rows="3" maxlength="180" placeholder="Essa frase vai receber vocês sempre que entrarem."></textarea></label>
-          <label class="field full"><span>Frase de acesso</span><input name="passphrase" type="password" minlength="4" autocomplete="new-password" required placeholder="Algo que apenas vocês conhecem"></label>
+          <label class="field full"><span>Frase do cofre</span><input name="passphrase" type="password" minlength="4" autocomplete="new-password" required placeholder="Algo que apenas vocês conhecem"></label>
           <p class="form-error full" id="setup-error" role="alert"></p>
           <button class="button primary full" type="submit">Criar nosso espaço</button>
         </form>
-        <p class="access-note"><span>◇</span> Guarde a frase de acesso. Ela protege a abertura local, mas ainda não substitui a autenticação online da próxima fase.</p>
+        <p class="access-note" id="setup-note"><span>◇</span> Guarde a frase de acesso. No modo local, ela protege a abertura neste aparelho.</p>
       </article>
       <article class="access-card" id="unlock-panel" hidden>
         <p class="eyebrow">BEM-VINDOS DE VOLTA</p>
         <h2>Abrir <em>nosso espaço.</em></h2>
-        <p>As informações particulares só serão carregadas depois da frase de acesso.</p>
+        <p id="unlock-description">As informações particulares só serão carregadas depois da frase do cofre.</p>
         <form class="access-form" id="unlock-form">
-          <label class="field full"><span>Frase de acesso</span><input name="passphrase" type="password" autocomplete="current-password" required autofocus></label>
+          <label class="field full"><span>Frase do cofre</span><input name="passphrase" type="password" autocomplete="current-password" required autofocus></label>
           <p class="form-error full" id="unlock-error" role="alert"></p>
           <button class="button primary full" type="submit">Entrar no L'amour vrai</button>
         </form>

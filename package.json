@@ -1,6 +1,6 @@
 {
   "name": "lamour-vrai",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Um arquivo afetivo particular para guardar memórias, cartas e sonhos.",
   "main": "main.js",
@@ -8,11 +8,13 @@
     "dev": "vite",
     "icons": "node scripts/generate-icons.mjs",
     "build": "vite build",
+    "build:local": "vite build --mode development",
     "preview": "vite preview",
     "test:smoke": "node tests/smoke.mjs",
-    "desktop": "npm run build && electron .",
+    "test:security": "node tests/security.mjs",
+    "desktop": "npm run build:local && electron .",
     "start": "npm run desktop",
-    "check": "npm run build && node --check main.js"
+    "check": "npm run test:security && npm run build:local && node --check main.js"
   },
   "devDependencies": {
     "electron": "^44.5.1",
@@ -20,5 +22,8 @@
     "sharp": "^0.35.5",
     "vite": "^7.1.9",
     "vite-plugin-pwa": "^2.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2"
   }
 }

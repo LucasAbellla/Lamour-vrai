@@ -52,10 +52,10 @@ export function createExperience({ store, feedback, auth, getProfile, onProfileC
     };
     document.querySelectorAll("[data-open-profile]").forEach(button => button.addEventListener("click", open));
     document.querySelectorAll("[data-close-profile]").forEach(button => button.addEventListener("click", () => feedback.closeDialog(dialog)));
-    form.addEventListener("submit", event => {
+    form.addEventListener("submit", async event => {
       event.preventDefault();
       try {
-        const profile = auth.updateProfile({
+        const profile = await auth.updateProfile({
           partnerOne: form.elements.partnerOne.value,
           partnerTwo: form.elements.partnerTwo.value,
           nickname: form.elements.nickname.value,
@@ -73,7 +73,17 @@ export function createExperience({ store, feedback, auth, getProfile, onProfileC
   }
 
   function setupBackup() {
-    document.querySelector("#export-data").addEventListener("click", () => {
+    const exportButton = document.querySelector("#export-data");
+    const importInput = document.querySelector("#import-data");
+    const importLabel = document.querySelector('label[for="import-data"]');
+    if (auth.mode === "secure") {
+      exportButton.textContent = "Backup cifrado automático";
+      importLabel.hidden = true;
+      importInput.disabled = true;
+      exportButton.addEventListener("click", () => feedback.toast("O cofre já mantém uma cópia cifrada sincronizada"));
+      return;
+    }
+    exportButton.addEventListener("click", () => {
       const blob = new Blob([JSON.stringify({
         schemaVersion: 2,
         exportedAt: new Date().toISOString(),
@@ -87,7 +97,7 @@ export function createExperience({ store, feedback, auth, getProfile, onProfileC
       URL.revokeObjectURL(link.href);
       feedback.toast("Backup preparado com carinho");
     });
-    document.querySelector("#import-data").addEventListener("change", async event => {
+    importInput.addEventListener("change", async event => {
       const file = event.target.files[0];
       if (!file) return;
       try {
@@ -132,8 +142,7 @@ export function createExperience({ store, feedback, auth, getProfile, onProfileC
       if (command === "profile") profileEditor.open();
       if (command === "install") document.querySelector("#install-app-footer").click();
       if (command === "lock") {
-        auth.lock();
-        window.location.reload();
+        void Promise.resolve(auth.lock()).finally(() => window.location.reload());
       }
       if (command === "backup") document.querySelector("#export-data").click();
     };
@@ -186,8 +195,7 @@ export function createExperience({ store, feedback, auth, getProfile, onProfileC
     document.querySelectorAll(".note-card").forEach(card => card.addEventListener("click", () => card.classList.toggle("open")));
     document.querySelector("#infinity").addEventListener("click", () => document.querySelector(".infinity-section").classList.toggle("revealed"));
     document.querySelector("#lock-space").addEventListener("click", () => {
-      auth.lock();
-      window.location.reload();
+      void Promise.resolve(auth.lock()).finally(() => window.location.reload());
     });
     const startDate = getProfile().relationshipStart;
     document.querySelector("#relationship-since").textContent = `Desde ${formatCompactDate(startDate)}`;

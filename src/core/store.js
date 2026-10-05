@@ -12,11 +12,13 @@ function normalizeState(candidate) {
   };
 }
 
-export function createStore(namespace) {
+export function createStore(namespace, options = {}) {
   const storageKey = `${namespace}-data-v2`;
   const legacyKey = `${namespace}-data-v1`;
   const listeners = new Set();
-  let state = load();
+  const localPersistence = options.localPersistence !== false;
+  let state = options.initialState ? normalizeState(options.initialState) : load();
+  let unsubscribeRemote = null;
 
   function load() {
     try {
@@ -33,7 +35,7 @@ export function createStore(namespace) {
   }
 
   function persist() {
-    localStorage.setItem(storageKey, JSON.stringify(state));
+    if (localPersistence) localStorage.setItem(storageKey, JSON.stringify(state));
   }
 
   function notify(meta = {}) {
@@ -45,12 +47,14 @@ export function createStore(namespace) {
     update(mutator, meta = {}) {
       mutator(state);
       persist();
+      void options.persist?.(structuredClone(state), meta);
       notify(meta);
       return state;
     },
     replace(nextState, meta = {}) {
       state = normalizeState(nextState);
       persist();
+      if (!meta.remote) void options.persist?.(structuredClone(state), meta);
       notify(meta);
       return state;
     },
@@ -60,6 +64,19 @@ export function createStore(namespace) {
     },
     snapshot() {
       return structuredClone(state);
+    },
+    connectRemote() {
+      if (!options.subscribeRemote || unsubscribeRemote) return;
+      unsubscribeRemote = options.subscribeRemote(async () => {
+        if (!options.reloadRemote) return;
+        state = normalizeState(await options.reloadRemote());
+        notify({ remote: true });
+      });
+    },
+    destroy() {
+      unsubscribeRemote?.();
+      unsubscribeRemote = null;
+      listeners.clear();
     }
   };
 }

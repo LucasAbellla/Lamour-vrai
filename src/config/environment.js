@@ -11,7 +11,26 @@ export const environment = Object.freeze({
 });
 
 export function assertEnvironment() {
-  if (environment.authMode === "supabase" && (!environment.supabaseUrl || !environment.supabaseAnonKey)) {
+  if (environment.isProduction && environment.authMode !== "supabase") {
+    throw new Error("A versão publicada não permite o modo local.");
+  }
+  if ((environment.authMode === "supabase" || environment.dataMode === "supabase") && (!environment.supabaseUrl || !environment.supabaseAnonKey)) {
     throw new Error("A autenticação online precisa das variáveis do Supabase.");
+  }
+  if ((environment.authMode === "supabase") !== (environment.dataMode === "supabase")) {
+    throw new Error("Autenticação e dados seguros precisam ser ativados juntos.");
+  }
+  if (environment.isProduction && !environment.supabaseUrl.startsWith("https://")) {
+    throw new Error("A versão publicada exige uma conexão HTTPS com o cofre.");
+  }
+  if (environment.supabaseAnonKey.startsWith("sb_secret_")) {
+    throw new Error("Uma chave administrativa nunca pode ser usada no aplicativo.");
+  }
+  try {
+    const encoded = (environment.supabaseAnonKey.split(".")[1] || "").replace(/-/g, "+").replace(/_/g, "/");
+    const payload = JSON.parse(atob(encoded.padEnd(Math.ceil(encoded.length / 4) * 4, "=")));
+    if (payload.role === "service_role") throw new Error("Uma chave administrativa nunca pode ser usada no aplicativo.");
+  } catch (error) {
+    if (error.message.includes("administrativa")) throw error;
   }
 }

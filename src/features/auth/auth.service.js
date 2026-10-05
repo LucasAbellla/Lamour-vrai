@@ -41,9 +41,11 @@ export function createAuthService(namespace) {
   }
 
   return {
+    mode: "local",
     hasAccount: () => Boolean(readAccount()?.credential?.hash),
     isUnlocked: () => Boolean(unlockedProfile),
     getProfile: () => unlockedProfile ? structuredClone(unlockedProfile) : null,
+    getStoreOptions: () => ({}),
     async setup(profileInput, passphrase) {
       if (String(passphrase).length < 4) throw new Error("A frase de acesso precisa ter pelo menos 4 caracteres.");
       const profile = normalizeProfile(profileInput);

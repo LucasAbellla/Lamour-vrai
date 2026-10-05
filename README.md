@@ -2,7 +2,7 @@
 
 Um arquivo afetivo particular para guardar memórias, cartas, sonhos e cápsulas do tempo. O projeto combina uma experiência web responsiva com uma versão opcional para computador.
 
-A versão `0.3.0` também está preparada como Progressive Web App. Ela ainda não foi instalada nos aparelhos: os recursos foram implementados e validados localmente para que a distribuição aconteça somente quando o produto estiver completo.
+A versão `0.4.0` acrescenta a Fase 3 de privacidade: acesso exclusivo para duas contas, link de uso único, TOTP obrigatório, regras no banco, fotografias privadas e criptografia de ponta a ponta. Ela ainda não foi instalada nos aparelhos: a ativação real ficará para quando o produto estiver completo.
 
 ## Estrutura atual
 
@@ -14,19 +14,18 @@ src/
 ├── core/            dados, formatação e perfil
 ├── data/            modelos e valores neutros
 ├── features/
-│   ├── auth/        cofre local e preparação para login online
+│   ├── auth/        acesso local e autenticação privada com segundo fator
 │   ├── memories/    álbum, busca, favoritos e constelação
 │   ├── capsules/    cápsulas do tempo
 │   ├── dreams/      planos compartilhados
 │   └── letters/     cartas particulares
 ├── styles/          tokens, visual principal e estilos estruturais
+├── security/        criptografia e sincronização do cofre
 ├── pwa/             instalação, estado de conexão e atualizações
 └── ui/              feedback, diálogos e movimento
 ```
 
-O conteúdo particular não fica no código-fonte. No primeiro acesso, o casal configura nomes, data, dedicação e uma frase de acesso. As informações são carregadas somente após o desbloqueio local.
-
-> O cofre local organiza a preparação estrutural, mas não substitui uma autenticação online segura. A sincronização entre aparelhos será acrescentada em uma fase posterior.
+O conteúdo particular não fica no código-fonte. Em produção, os dados são cifrados no aparelho e o servidor recebe apenas o conteúdo ilegível. O acesso exige uma das duas contas autorizadas, link por e-mail, TOTP e a frase compartilhada do cofre.
 
 ## Executar no navegador
 
@@ -41,6 +40,8 @@ npm run dev
 npm run build
 npm run preview
 ```
+
+O build de produção exige as variáveis do ambiente privado. Para visualizar o protótipo local sem conectar o servidor, use `npm run build:local`.
 
 O build produz automaticamente:
 
@@ -62,7 +63,7 @@ Depois do primeiro carregamento por HTTPS, a estrutura visual e os arquivos esse
 
 As atualizações não são aplicadas no meio de uma escrita. Quando uma versão nova estiver pronta, o aplicativo exibe um aviso e aguarda a confirmação para atualizar.
 
-O site ainda não deve ser tratado como publicado para uso real. Antes da instalação nos celulares, faltam as fases de autenticação online, sincronização privada, armazenamento de fotografias e revisão final de conteúdo.
+O site ainda não foi publicado nem instalado. A autenticação, sincronização e proteção de fotos estão implementadas; a criação do ambiente privado e os testes com os dois e-mails serão feitos apenas na etapa de ativação.
 
 ## Executar no computador
 
@@ -75,18 +76,18 @@ npm run desktop
 ## Ambientes
 
 - `.env.development`: desenvolvimento local.
-- `.env.production`: versão construída para publicação.
+- `.env.production`: exige o modo seguro para a versão publicada.
 - `.env.example`: referência para futuras integrações.
 
 Variáveis que contenham credenciais privadas nunca devem ser enviadas ao repositório. Chaves públicas de cliente só poderão ser usadas com políticas de acesso adequadas no servidor.
 
 ## Privacidade e dados
 
-Nesta fase, memórias, fotografias pequenas, sonhos, cartas, cápsulas e perfil são armazenados no próprio dispositivo. O backup continua disponível na interface. Fotografias são limitadas a 1,5 MB enquanto o armazenamento em nuvem ainda não está ativo.
+No desenvolvimento local, os registros continuam no navegador para facilitar o protótipo. Em produção, memórias, perfil, sonhos, cartas e cápsulas usam AES-GCM; fotografias são cifradas antes de entrar no bucket privado. A frase e a chave aberta não são persistidas.
 
 Dados de demonstração pessoais não são incluídos no código nem no build publicado.
 
-O arquivo `robots.txt` bloqueia a indexação por mecanismos de busca durante esta etapa. Isso reduz descoberta acidental, mas não substitui autenticação: a proteção real do conteúdo compartilhado será implementada antes da publicação final.
+Leia [docs/SECURITY.md](docs/SECURITY.md) para o modelo de segurança e [docs/ATIVACAO-PRIVADA.md](docs/ATIVACAO-PRIVADA.md) para a preparação final sem expor e-mails ou credenciais.
 
 ## Validação
 
@@ -95,4 +96,4 @@ npm run check
 npm run test:smoke
 ```
 
-O teste automatizado cobre manifest, service worker, abertura offline, cofre local, memória, sonho, carta, cápsula, bloqueio, desbloqueio e layout móvel.
+`npm run check` também valida criptografia, frase incorreta, contexto autenticado, fotografia cifrada, políticas RLS, AAL2, limite de duas contas e modo seguro de produção. O teste visual cobre manifest, service worker, abertura offline, cofre local, memória, sonho, carta, cápsula, bloqueio, desbloqueio e layout móvel.
