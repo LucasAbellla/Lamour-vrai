@@ -1,50 +1,62 @@
 # L'amour vrai
 
-Um arquivo afetivo particular para Lucas e Sofia: presente de um ano de namoro, álbum vivo e espaço para continuar guardando a história dos dois.
+Um arquivo afetivo particular para guardar memórias, cartas, sonhos e cápsulas do tempo. O projeto combina uma experiência web responsiva com uma versão opcional para computador.
 
-## O que já funciona
+## Estrutura atual
 
-- contador real desde 31/10/2025;
-- memórias com fotografia, data, categoria e descrição;
-- busca, filtros, favoritos e visualização em álbum ou linha do tempo;
-- edição e exclusão segura de memórias;
-- constelação interativa formada pelas lembranças;
-- memória aleatória com **Me surpreenda**;
-- cápsulas do tempo com data de abertura;
-- carta, pequenos detalhes, sonhos e experiência comemorativa;
-- central rápida de ações com `Ctrl+K`;
-- exportação e restauração de backup;
-- funcionamento local e offline para as partes essenciais;
-- interface responsiva e opção de redução de movimento.
+O projeto usa Vite e módulos JavaScript nativos.
 
-## Executar como aplicativo
+```text
+src/
+├── config/          ambientes e integrações futuras
+├── core/            dados, formatação e perfil
+├── data/            modelos e valores neutros
+├── features/
+│   ├── auth/        cofre local e preparação para login online
+│   ├── memories/    álbum, busca, favoritos e constelação
+│   ├── capsules/    cápsulas do tempo
+│   ├── dreams/      planos compartilhados
+│   └── letters/     cartas particulares
+├── styles/          tokens, visual principal e estilos estruturais
+└── ui/              feedback, diálogos e movimento
+```
 
-Requer Node.js instalado.
+O conteúdo particular não fica no código-fonte. No primeiro acesso, o casal configura nomes, data, dedicação e uma frase de acesso. As informações são carregadas somente após o desbloqueio local.
+
+> O cofre local organiza a preparação estrutural, mas não substitui uma autenticação online segura. A sincronização entre aparelhos será acrescentada em uma fase posterior.
+
+## Executar no navegador
 
 ```bash
 npm install
-npm start
+npm run dev
 ```
 
-Para validar os arquivos JavaScript:
+## Gerar a versão publicada
 
 ```bash
-npm run check
+npm run build
+npm run preview
 ```
 
-## Personalização
+## Executar no computador
 
-Os nomes, a data inicial, as memórias de demonstração e os sonhos ficam no início de `dist/app.js`, logo abaixo de `PERSONALIZE A PARTIR DAQUI`.
+O Electron continua opcional e sempre usa a versão construída pelo Vite:
 
-Os principais arquivos são:
+```bash
+npm run desktop
+```
 
-- `dist/index.html`: estrutura da experiência;
-- `dist/styles.css`: identidade visual, responsividade e animações;
-- `dist/app.js`: conteúdo, armazenamento e interações;
-- `main.js`: janela segura do Electron.
+## Ambientes
+
+- `.env.development`: desenvolvimento local.
+- `.env.production`: versão construída para publicação.
+- `.env.example`: referência para futuras integrações.
+
+Variáveis que contenham credenciais privadas nunca devem ser enviadas ao repositório. Chaves públicas de cliente só poderão ser usadas com políticas de acesso adequadas no servidor.
 
 ## Privacidade e dados
 
-As memórias, fotografias pequenas, sonhos e cápsulas são armazenados no próprio dispositivo com `localStorage`. Nenhum conteúdo é enviado automaticamente para serviços externos.
+Nesta fase, memórias, fotografias pequenas, sonhos, cartas, cápsulas e perfil são armazenados no próprio dispositivo. O backup continua disponível na interface. Fotografias são limitadas a 1,5 MB enquanto o armazenamento em nuvem ainda não está ativo.
 
-Use **Exportar backup** regularmente. Fotografias são limitadas a 1,5 MB nesta versão para evitar exceder o espaço disponível no navegador.
+Dados de demonstração pessoais não são incluídos no código nem no build publicado.

@@ -19,7 +19,9 @@ function createWindow() {
   });
 
   Menu.setApplicationMenu(null);
-  window.loadFile(path.join(__dirname, "dist", "index.html"));
+  const developmentUrl = process.env.ELECTRON_START_URL;
+  if (developmentUrl) window.loadURL(developmentUrl);
+  else window.loadFile(path.join(__dirname, "dist", "index.html"));
   window.once("ready-to-show", () => window.show());
 }
 
