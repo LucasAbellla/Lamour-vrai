@@ -1,5 +1,3 @@
-import { formatCompactDate } from "../core/formatters.js";
-
 export function createExperience({ store, feedback, auth, getProfile, onProfileChanged, memories, capsules, dreams, letters }) {
   function setupStory() {
     const dialog = document.querySelector("#story-dialog");
@@ -192,13 +190,7 @@ export function createExperience({ store, feedback, auth, getProfile, onProfileC
   }
 
   function setupSmallInteractions() {
-    document.querySelectorAll(".note-card").forEach(card => card.addEventListener("click", () => card.classList.toggle("open")));
     document.querySelector("#infinity").addEventListener("click", () => document.querySelector(".infinity-section").classList.toggle("revealed"));
-    document.querySelector("#lock-space").addEventListener("click", () => {
-      void Promise.resolve(auth.lock()).finally(() => window.location.reload());
-    });
-    const startDate = getProfile().relationshipStart;
-    document.querySelector("#relationship-since").textContent = `Desde ${formatCompactDate(startDate)}`;
   }
 
   function initialize() {

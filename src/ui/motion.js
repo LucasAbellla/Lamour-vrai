@@ -115,7 +115,7 @@ export function setupRevealAndNavigation() {
     }), { threshold: .12 });
     reveals.forEach(item => observer.observe(item));
   }
-  const links = document.querySelectorAll(".desktop-nav a, .mobile-nav a");
+  const links = document.querySelectorAll(".mobile-nav a");
   const sections = [...document.querySelectorAll("main section[id]")];
   const navigationObserver = new IntersectionObserver(entries => entries.forEach(entry => {
     if (!entry.isIntersecting) return;

@@ -48,6 +48,17 @@ try {
   await page.getByRole("button", { name: "Criar nosso espaço", exact: true }).click();
   await page.locator("#access-gate").waitFor({ state: "hidden" });
 
+  const headerButtons = page.locator(".topbar button");
+  if (await headerButtons.count() !== 1) throw new Error("O cabeçalho deve manter somente o botão de guardar memória.");
+  await page.locator(".topbar").getByRole("button", { name: /Guardar memória/ }).waitFor();
+  if (await page.locator(".little-things, #notes-grid").count()) throw new Error("A seção Pequenas coisas tuas ainda está presente.");
+  const contentOrderIsCorrect = await page.evaluate(() => {
+    const dreams = document.querySelector("#futuro");
+    const capsules = document.querySelector("#capsulas");
+    return Boolean(dreams && capsules && (dreams.compareDocumentPosition(capsules) & Node.DOCUMENT_POSITION_FOLLOWING));
+  });
+  if (!contentOrderIsCorrect) throw new Error("Os sonhos precisam aparecer antes das cápsulas.");
+
   await page.getByRole("button", { name: "Guardar memória", exact: true }).first().click();
   await page.locator('#memory-form [name="title"]').fill("Nosso primeiro teste");
   await page.locator('#memory-form [name="date"]').fill("2026-10-05");
@@ -80,7 +91,8 @@ try {
 
   await page.screenshot({ path: path.join(artifacts, "02-private-space.png"), fullPage: true });
 
-  await page.getByRole("button", { name: "Bloquear o espaço", exact: true }).click();
+  await page.keyboard.press("Control+K");
+  await page.getByRole("button", { name: /Bloquear nosso espaço/ }).click();
   await page.locator("#unlock-panel").waitFor({ state: "visible" });
   await page.locator('#unlock-form [name="passphrase"]').fill("teste-local");
   await page.getByRole("button", { name: "Entrar no L'amour vrai", exact: true }).click();
@@ -101,7 +113,7 @@ try {
   await context.setOffline(true);
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.locator("#app-shell").waitFor({ state: "visible" });
-  await page.getByText("Modo offline", { exact: true }).waitFor();
+  await page.locator("html.is-offline").waitFor();
   await context.setOffline(false);
 
   if (runtimeErrors.length) throw new Error(`Erros do navegador: ${runtimeErrors.join(" | ")}`);

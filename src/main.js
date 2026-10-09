@@ -73,7 +73,8 @@ async function initializePrivateSpace(profile) {
   }).initialize();
 
   if (auth.mode === "secure") {
-    document.querySelector("#connection-status").textContent = "Cofre cifrado · 2FA";
+    const connectionStatus = document.querySelector("#connection-status");
+    if (connectionStatus) connectionStatus.textContent = "Cofre cifrado · 2FA";
     document.querySelector("#saved-note").textContent = "Cifrado antes de sincronizar";
     window.addEventListener("lamour:vault-error", event => {
       feedback.toast(event.detail?.message || "Uma alteração ainda não foi sincronizada");

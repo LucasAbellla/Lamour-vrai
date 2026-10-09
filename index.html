@@ -101,16 +101,7 @@
         <span class="brand-mark" aria-hidden="true">LV</span>
         <span><strong>L'amour vrai</strong><small data-profile="couple-name">Nosso espaço</small></span>
       </a>
-      <nav class="desktop-nav" aria-label="Navegação principal">
-        <a class="active" href="#inicio">Início</a>
-        <a href="#memorias">Memórias</a>
-        <a href="#constelacao">Constelação</a>
-        <a href="#cartas">Cartas</a>
-        <a href="#futuro">Nosso futuro</a>
-      </nav>
       <div class="topbar-actions">
-        <div class="topbar-profile"><span class="connection-dot" id="connection-dot" aria-hidden="true"></span><small id="connection-status">Conectado</small><small id="relationship-since">Nosso tempo</small><button type="button" id="lock-space" aria-label="Bloquear o espaço" title="Bloquear">⌁</button></div>
-        <button class="command-trigger" type="button" data-open-command aria-label="Abrir central rápida"><span>⌕</span><kbd>Ctrl K</kbd></button>
         <button class="button primary compact" type="button" data-open-memory><span>+</span> Guardar memória</button>
       </div>
     </header>
@@ -228,22 +219,6 @@
         </div>
       </section>
 
-      <section class="section little-things" aria-labelledby="little-things-title">
-        <header class="section-heading reveal">
-          <div>
-            <p class="eyebrow">PEQUENAS COISAS TUAS</p>
-            <h2 id="little-things-title">Coisas que talvez você nunca tenha percebido <em>que eu percebo.</em></h2>
-          </div>
-          <p class="section-intro">Abra cada bilhete. O amor também mora nas coisas que quase passam despercebidas.</p>
-        </header>
-        <div class="notes-grid reveal" id="notes-grid">
-          <button class="note-card" type="button"><span>01</span><strong>Sua risada</strong><p>É o jeito mais rápido de um dia comum ficar memorável.</p><small>toque para abrir</small></button>
-          <button class="note-card" type="button"><span>02</span><strong>Seus jeitos bobos</strong><p>Os detalhes que você nem percebe são alguns dos que eu mais guardo.</p><small>toque para abrir</small></button>
-          <button class="note-card" type="button"><span>03</span><strong>Como você cuida</strong><p>Existe carinho até nas perguntas simples que você faz.</p><small>toque para abrir</small></button>
-          <button class="note-card secret-note" type="button"><span>04</span><strong>Uma coisa secreta</strong><p><span data-profile="nickname">Meu amor</span> continua sendo meu lugar favorito no mundo.</p><small>toque para abrir</small></button>
-        </div>
-      </section>
-
       <section class="letter-section" id="cartas" aria-labelledby="letter-title">
         <div class="letter-art reveal" aria-hidden="true">
           <div class="envelope"><div class="envelope-paper">L · S</div></div>
@@ -253,26 +228,6 @@
           <h2 id="letter-title">Tem uma coisa que eu ainda prefiro te dizer <em>como uma carta.</em></h2>
           <p>A carta do primeiro ano ficará guardada aqui, sem distrações e pronta para ser aberta novamente quando vocês quiserem.</p>
           <button class="button secondary" type="button" data-open-letter>Abrir o envelope</button>
-        </div>
-      </section>
-
-      <section class="section capsule-section" id="capsulas" aria-labelledby="capsule-title">
-        <header class="section-heading reveal">
-          <div>
-            <p class="eyebrow">PARA O NOSSO FUTURO</p>
-            <h2 id="capsule-title">Palavras guardadas para <em>o momento certo.</em></h2>
-          </div>
-          <div class="capsule-heading-action">
-            <p class="section-intro">Escrevam agora e escolham quando a mensagem poderá ser aberta.</p>
-            <button class="button secondary" type="button" data-open-capsule><span aria-hidden="true">＋</span> Criar cápsula</button>
-          </div>
-        </header>
-        <div class="capsule-grid reveal" id="capsule-grid"></div>
-        <div class="capsule-empty reveal" id="capsule-empty" hidden>
-          <span aria-hidden="true">◇</span>
-          <h3>Nenhuma cápsula esperando pelo futuro.</h3>
-          <p>Guarde uma mensagem para outro aniversário, uma viagem ou um dia comum que ainda vai chegar.</p>
-          <button class="button primary" type="button" data-open-capsule>Criar a primeira cápsula</button>
         </div>
       </section>
 
@@ -293,6 +248,26 @@
           <h3>O futuro ainda tem todas as formas.</h3>
           <p>Guardem um lugar para visitar, uma rotina que desejam ou qualquer coisa que gostariam de viver juntos.</p>
           <button class="button primary" type="button" data-open-dream>Guardar nosso primeiro sonho</button>
+        </div>
+      </section>
+
+      <section class="section capsule-section" id="capsulas" aria-labelledby="capsule-title">
+        <header class="section-heading reveal">
+          <div>
+            <p class="eyebrow">PARA O NOSSO FUTURO</p>
+            <h2 id="capsule-title">Palavras guardadas para <em>o momento certo.</em></h2>
+          </div>
+          <div class="capsule-heading-action">
+            <p class="section-intro">Escrevam agora e escolham quando a mensagem poderá ser aberta.</p>
+            <button class="button secondary" type="button" data-open-capsule><span aria-hidden="true">＋</span> Criar cápsula</button>
+          </div>
+        </header>
+        <div class="capsule-grid reveal" id="capsule-grid"></div>
+        <div class="capsule-empty reveal" id="capsule-empty" hidden>
+          <span aria-hidden="true">◇</span>
+          <h3>Nenhuma cápsula esperando pelo futuro.</h3>
+          <p>Guarde uma mensagem para outro aniversário, uma viagem ou um dia comum que ainda vai chegar.</p>
+          <button class="button primary" type="button" data-open-capsule>Criar a primeira cápsula</button>
         </div>
       </section>
 
@@ -466,8 +441,8 @@
       <div class="command-list" id="command-list">
         <button type="button" data-command="new-memory"><span>＋</span><div><strong>Guardar uma memória</strong><small>Adicionar foto, data e algumas palavras</small></div><kbd>N</kbd></button>
         <button type="button" data-command="surprise"><span>✦</span><div><strong>Me surpreenda</strong><small>Revisitar uma memória aleatória</small></div><kbd>S</kbd></button>
-        <button type="button" data-command="capsule"><span>◇</span><div><strong>Criar cápsula do tempo</strong><small>Guardar uma mensagem para o futuro</small></div><kbd>C</kbd></button>
         <button type="button" data-command="dream"><span>∞</span><div><strong>Guardar um sonho</strong><small>Acrescentar algo aos planos de vocês</small></div><kbd>D</kbd></button>
+        <button type="button" data-command="capsule"><span>◇</span><div><strong>Criar cápsula do tempo</strong><small>Guardar uma mensagem para o futuro</small></div><kbd>C</kbd></button>
         <button type="button" data-command="constellation"><span>⁙</span><div><strong>Abrir nossa constelação</strong><small>Ver as estrelas formadas pelas memórias</small></div><kbd>E</kbd></button>
         <button type="button" data-command="story"><span>∞</span><div><strong>Revisitar o primeiro ano</strong><small>Abrir a experiência comemorativa</small></div><kbd>1</kbd></button>
         <button type="button" data-command="profile"><span>♡</span><div><strong>Detalhes do casal</strong><small>Nomes, data e frase particular</small></div><kbd>P</kbd></button>
