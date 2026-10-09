@@ -14,8 +14,8 @@ export function setupPwa({ feedback }) {
 
   const updateConnectionStatus = () => {
     const online = navigator.onLine;
-    connectionStatus.textContent = online ? (isStandalone() ? "App instalado" : "Conectado") : "Modo offline";
-    connectionDot.classList.toggle("offline", !online);
+    if (connectionStatus) connectionStatus.textContent = online ? (isStandalone() ? "App instalado" : "Conectado") : "Modo offline";
+    connectionDot?.classList.toggle("offline", !online);
     document.documentElement.classList.toggle("is-offline", !online);
   };
 
@@ -65,7 +65,7 @@ export function setupPwa({ feedback }) {
 
   updateConnectionStatus();
   if (!["http:", "https:"].includes(window.location.protocol)) {
-    connectionStatus.textContent = "Aplicativo para computador";
+    if (connectionStatus) connectionStatus.textContent = "Aplicativo para computador";
     return;
   }
 
