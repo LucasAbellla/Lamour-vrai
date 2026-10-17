@@ -92,3 +92,9 @@
 @media (prefers-reduced-motion: reduce) {
   .access-gate { transition: none; }
 }
+
+.import-modal .confirm-card > span { color: var(--accent-gold); }
+.import-modal #import-summary { color: var(--text-primary); }
+.import-note { color: var(--text-tertiary); font-size: .76rem; line-height: 1.6; }
+.import-modal .form-error { min-height: 0; }
+.import-modal .button:disabled { cursor: progress; opacity: .75; transform: none; }

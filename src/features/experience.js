@@ -1,3 +1,6 @@
+import { countItems, describeCounts, importBackupIntoStore, parseBackup } from "../core/backup.js";
+import { preparePhotoDataUrl } from "../core/photos.js";
+
 export function createExperience({ store, feedback, auth, getProfile, onProfileChanged, memories, capsules, dreams, letters }) {
   function setupStory() {
     const dialog = document.querySelector("#story-dialog");
@@ -70,14 +73,138 @@ export function createExperience({ store, feedback, auth, getProfile, onProfileC
     return { open };
   }
 
+  function renderAll() {
+    memories.render();
+    capsules.render();
+    dreams.render();
+    letters.render();
+  }
+
   function setupBackup() {
     const exportButton = document.querySelector("#export-data");
     const importInput = document.querySelector("#import-data");
     const importLabel = document.querySelector('label[for="import-data"]');
-    if (auth.mode === "secure") {
+    const secure = auth.mode === "secure";
+    const dialog = document.querySelector("#import-dialog");
+    const title = document.querySelector("#import-title");
+    const summary = document.querySelector("#import-summary");
+    const note = document.querySelector("#import-note");
+    const error = document.querySelector("#import-error");
+    const confirmButton = document.querySelector("[data-confirm-import]");
+    const cancelButton = document.querySelector("[data-cancel-import]");
+    let pending = null;
+    let retryOnly = false;
+    let working = false;
+
+    const preventLeaving = event => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    const setWorking = (value, label = "") => {
+      working = value;
+      confirmButton.disabled = value;
+      cancelButton.disabled = value;
+      if (label) confirmButton.textContent = label;
+      if (value) window.addEventListener("beforeunload", preventLeaving);
+      else window.removeEventListener("beforeunload", preventLeaving);
+    };
+    dialog.addEventListener("cancel", event => { if (working) event.preventDefault(); });
+    cancelButton.addEventListener("click", () => feedback.closeDialog(dialog));
+
+    function presentBackup(backup) {
+      const counts = countItems(backup.state);
+      const photos = backup.state.memories.filter(memory => memory.photo).length;
+      const pieces = [`Este arquivo tem ${describeCounts(counts)}`];
+      if (photos) pieces.push(`${photos} ${photos === 1 ? "memória tem fotografia" : "memórias têm fotografia"}`);
+      summary.textContent = `${pieces.join("; ")}.`;
+      const discarded = backup.discarded ? ` ${backup.discarded} ${backup.discarded === 1 ? "registro incompleto foi ignorado" : "registros incompletos foram ignorados"}.` : "";
+      if (secure) {
+        title.textContent = "Levar para o cofre?";
+        note.textContent = `Tudo será cifrado neste aparelho antes de sair, e as fotografias serão reduzidas. O que já está no cofre continua intacto; registros repetidos são ignorados. Mantenha o aplicativo aberto até a confirmação.${discarded}`;
+        confirmButton.textContent = "Levar para o cofre";
+      } else {
+        title.textContent = "Restaurar este backup?";
+        note.textContent = `O conteúdo atual deste dispositivo será substituído pelo conteúdo do arquivo.${discarded}`;
+        confirmButton.textContent = "Restaurar backup";
+      }
+      error.textContent = "";
+      retryOnly = false;
+      pending = backup;
+      feedback.openDialog(dialog);
+    }
+
+    async function importIntoVault() {
+      setWorking(true, "Preparando…");
+      error.textContent = "";
+      try {
+        const result = retryOnly
+          ? (store.replace(store.getState(), { feature: "backup" }), await store.whenSaved(), { totalAdded: -1 })
+          : await importBackupIntoStore({
+            store,
+            backup: pending,
+            preparePhoto: preparePhotoDataUrl,
+            onProgress({ stage, current, total }) {
+              confirmButton.textContent = stage === "photos"
+                ? `Preparando fotografias ${current}/${total}…`
+                : "Cifrando e enviando…";
+            }
+          });
+        renderAll();
+        setWorking(false);
+        feedback.closeDialog(dialog);
+        if (result.totalAdded === 0) feedback.toast("Tudo deste backup já estava no cofre");
+        else if (result.totalAdded > 0) feedback.toast(`${describeCounts(result.added)} ${result.totalAdded === 1 ? "chegou" : "chegaram"} ao cofre cifrado`);
+        else feedback.toast("Envio concluído — tudo está no cofre");
+        pending = null;
+      } catch (issue) {
+        renderAll();
+        setWorking(false, "Tentar enviar de novo");
+        retryOnly = true;
+        error.textContent = `Parte do conteúdo ainda não chegou ao cofre (${issue.message}). Verifique a conexão e tente de novo — nada será duplicado.`;
+      }
+    }
+
+    async function restoreLocally() {
+      setWorking(true, "Preparando…");
+      error.textContent = "";
+      try {
+        const withPhotos = pending.state.memories.filter(memory => memory.photo);
+        for (const [index, memory] of withPhotos.entries()) {
+          confirmButton.textContent = `Preparando fotografias ${index + 1}/${withPhotos.length}…`;
+          memory.photo = await preparePhotoDataUrl(memory.photo).catch(() => memory.photo);
+        }
+        store.replace(pending.state, { feature: "backup" });
+        if (pending.profile) onProfileChanged(auth.updateProfile(pending.profile));
+        renderAll();
+        setWorking(false);
+        feedback.closeDialog(dialog);
+        feedback.toast("Backup restaurado com sucesso");
+        pending = null;
+      } catch (issue) {
+        setWorking(false, "Restaurar backup");
+        error.textContent = issue.message;
+      }
+    }
+
+    confirmButton.addEventListener("click", () => {
+      if (!pending || working) return;
+      void (secure ? importIntoVault() : restoreLocally());
+    });
+
+    importInput.addEventListener("change", async event => {
+      const file = event.target.files[0];
+      event.target.value = "";
+      if (!file) return;
+      try {
+        presentBackup(parseBackup(await file.text()));
+      } catch (issue) {
+        feedback.toast(issue.message);
+      }
+    });
+
+    if (secure) {
       exportButton.textContent = "Backup cifrado automático";
-      importLabel.hidden = true;
-      importInput.disabled = true;
+      importLabel.textContent = "Trazer backup local";
       exportButton.addEventListener("click", () => feedback.toast("O cofre já mantém uma cópia cifrada sincronizada"));
       return;
     }
@@ -94,24 +221,6 @@ export function createExperience({ store, feedback, auth, getProfile, onProfileC
       link.click();
       URL.revokeObjectURL(link.href);
       feedback.toast("Backup preparado com carinho");
-    });
-    importInput.addEventListener("change", async event => {
-      const file = event.target.files[0];
-      if (!file) return;
-      try {
-        const imported = JSON.parse(await file.text());
-        if (!Array.isArray(imported.memories) || !Array.isArray(imported.dreams)) throw new Error();
-        store.replace(imported, { feature: "backup" });
-        if (imported.profile) onProfileChanged(auth.updateProfile(imported.profile));
-        memories.render();
-        capsules.render();
-        dreams.render();
-        letters.render();
-        feedback.toast("Backup restaurado com sucesso");
-      } catch (_) {
-        feedback.toast("Esse arquivo não parece ser um backup válido");
-      }
-      event.target.value = "";
     });
   }
 

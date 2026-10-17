@@ -18,6 +18,8 @@ export function createStore(namespace, options = {}) {
   const listeners = new Set();
   const localPersistence = options.localPersistence !== false;
   let state = options.initialState ? normalizeState(options.initialState) : load();
+  let lastSaved = JSON.stringify(state);
+  let lastRemoteSave = Promise.resolve();
   let unsubscribeRemote = null;
 
   function load() {
@@ -34,8 +36,26 @@ export function createStore(namespace, options = {}) {
     return createEmptyState();
   }
 
+  // Se o navegador recusar a gravação, o estado volta ao último salvo para não exibir algo que se perderia.
   function persist() {
-    if (localPersistence) localStorage.setItem(storageKey, JSON.stringify(state));
+    if (!localPersistence) return;
+    const serialized = JSON.stringify(state);
+    try {
+      localStorage.setItem(storageKey, serialized);
+      lastSaved = serialized;
+    } catch (error) {
+      state = normalizeState(JSON.parse(lastSaved));
+      const quotaExceeded = error?.name === "QuotaExceededError" || error?.code === 22;
+      throw new Error(quotaExceeded
+        ? "O espaço deste navegador acabou. Exporte um backup ou remova algumas fotografias antes de continuar."
+        : "Não foi possível salvar neste dispositivo.");
+    }
+  }
+
+  function persistRemote(meta) {
+    if (!options.persist) return;
+    lastRemoteSave = Promise.resolve(options.persist(structuredClone(state), meta));
+    lastRemoteSave.catch(() => {});
   }
 
   function notify(meta = {}) {
@@ -47,17 +67,19 @@ export function createStore(namespace, options = {}) {
     update(mutator, meta = {}) {
       mutator(state);
       persist();
-      void options.persist?.(structuredClone(state), meta);
+      persistRemote(meta);
       notify(meta);
       return state;
     },
     replace(nextState, meta = {}) {
       state = normalizeState(nextState);
       persist();
-      if (!meta.remote) void options.persist?.(structuredClone(state), meta);
+      if (!meta.remote) persistRemote(meta);
       notify(meta);
       return state;
     },
+    // Resolve quando a última gravação no cofre terminar; rejeita se ela falhar.
+    whenSaved: () => lastRemoteSave,
     subscribe(listener) {
       listeners.add(listener);
       return () => listeners.delete(listener);

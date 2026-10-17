@@ -169,14 +169,13 @@ export function createSecureVaultRepository({ supabase, coupleId, userId, dataKe
   function persist(state, meta = {}) {
     const snapshot = structuredClone(state);
     const features = FEATURE_KINDS[meta.feature] ? [meta.feature] : Object.keys(FEATURE_KINDS);
-    saveQueue = saveQueue
-      .then(async () => {
-        for (const feature of features) await saveFeature(snapshot, feature);
-      })
-      .catch(error => {
-        onError?.(error);
-      });
-    return saveQueue;
+    const run = saveQueue.then(async () => {
+      for (const feature of features) await saveFeature(snapshot, feature);
+    });
+    saveQueue = run.catch(error => {
+      onError?.(error);
+    });
+    return run;
   }
 
   async function saveProfile(profile) {

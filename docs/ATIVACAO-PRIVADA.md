@@ -61,6 +61,8 @@ npm run build
 4. Lucas entrega a frase a Sofia pessoalmente ou por outro canal separado.
 5. Sofia acessa com o próprio link, cadastra o próprio TOTP e abre o cofre com a mesma frase.
 
+Se o conteúdo foi preparado antes no modo local, exporte o backup nesse navegador e, já dentro do cofre, use **Trazer backup local** no rodapé. O app mostra um resumo antes de enviar, reduz as fotografias, cifra tudo no aparelho e só acrescenta o que ainda não existe: nada que já esteja no cofre é substituído ou apagado. Se a conexão cair no meio, basta tentar de novo; nada é duplicado.
+
 Cada pessoa usa sua identidade e seu autenticador. A frase apenas abre a criptografia compartilhada; ela não substitui as contas individuais.
 
 ## 5. Testes de aceite obrigatórios
