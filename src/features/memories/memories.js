@@ -1,5 +1,6 @@
 import { categoryNames, starPositions } from "../../data/defaults.js";
-import { escapeHTML, fileToDataURL, formatDate, safeImage } from "../../core/formatters.js";
+import { escapeHTML, formatDate, safeImage } from "../../core/formatters.js";
+import { preparePhotoFile } from "../../core/photos.js";
 
 export function createMemoriesFeature({ store, feedback }) {
   let activeFilter = "all";
@@ -166,8 +167,12 @@ export function createMemoriesFeature({ store, feedback }) {
       event.preventDefault();
       const error = document.querySelector("#form-error");
       error.textContent = "";
+      const saveLabel = saveButton.textContent;
+      const file = form.elements.photo.files[0];
+      saveButton.disabled = true;
+      if (file) saveButton.textContent = "Preparando a fotografia…";
       try {
-        const newPhoto = await fileToDataURL(form.elements.photo.files[0]);
+        const newPhoto = (await preparePhotoFile(file))?.dataUrl || "";
         if (editingMemoryId) {
           const memory = store.getState().memories.find(item => item.id === editingMemoryId);
           if (!memory) throw new Error("Esta memória não foi encontrada.");
@@ -196,6 +201,9 @@ export function createMemoriesFeature({ store, feedback }) {
         document.querySelector("#memorias").scrollIntoView({ behavior: "smooth" });
       } catch (issue) {
         error.textContent = issue.message;
+      } finally {
+        saveButton.disabled = false;
+        saveButton.textContent = saveLabel;
       }
     });
     return { openNew, openForEdit };

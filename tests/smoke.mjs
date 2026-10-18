@@ -1,6 +1,25 @@
 import fs from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright-core";
+import sharp from "sharp";
+
+// Uma foto de celular típica: 12 MP, gradiente com ruído e bem maior que o antigo limite de 1,5 MB.
+async function createLargePhoto() {
+  const width = 4000;
+  const height = 3000;
+  const raw = Buffer.alloc(width * height * 3);
+  for (let index = 0; index < width * height; index += 1) {
+    const x = index % width;
+    const y = Math.floor(index / width);
+    const noise = Math.floor(Math.random() * 36);
+    raw[index * 3] = (x * 200 / width + noise) & 255;
+    raw[index * 3 + 1] = (y * 120 / height + noise) & 255;
+    raw[index * 3 + 2] = ((x + y) * 90 / width + noise) & 255;
+  }
+  const photo = await sharp(raw, { raw: { width, height, channels: 3 } }).jpeg({ quality: 92 }).toBuffer();
+  if (photo.length <= 1.5 * 1024 * 1024) throw new Error("A foto de teste precisa ser maior que 1,5 MB.");
+  return photo;
+}
 
 const edgeCandidates = [
   "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
@@ -64,9 +83,20 @@ try {
   await page.locator('#memory-form [name="date"]').fill("2026-10-05");
   await page.locator('#memory-form [name="category"]').selectOption("especial");
   await page.locator('#memory-form [name="description"]').fill("Uma lembrança criada para validar a nova estrutura.");
+  await page.locator('#memory-form [name="photo"]').setInputFiles({ name: "foto-do-celular.jpg", mimeType: "image/jpeg", buffer: await createLargePhoto() });
   await page.locator("#save-memory").click();
-  await page.locator("#memory-count").waitFor();
+  await page.locator("#memory-dialog").waitFor({ state: "hidden", timeout: 30000 });
   if ((await page.locator("#memory-count").innerText()) !== "01") throw new Error("A memória não foi contabilizada.");
+  const savedPhoto = await page.evaluate(async () => {
+    const photo = JSON.parse(localStorage.getItem("lamour-vrai-data-v2")).memories[0].photo;
+    const image = new Image();
+    image.src = photo;
+    await image.decode();
+    return { type: photo.slice(5, photo.indexOf(";")), bytes: Math.round((photo.length - photo.indexOf(",") - 1) * .75), width: image.naturalWidth, height: image.naturalHeight };
+  });
+  if (savedPhoto.type !== "image/webp" || savedPhoto.bytes > 700 * 1024 || Math.max(savedPhoto.width, savedPhoto.height) > 1600) {
+    throw new Error(`A fotografia não foi reduzida corretamente: ${JSON.stringify(savedPhoto)}`);
+  }
 
   await page.locator("[data-open-dream]").first().click();
   await page.locator('#dream-form [name="title"]').fill("Ver o pôr do sol em outro lugar");
@@ -116,6 +146,23 @@ try {
   await page.locator("html.is-offline").waitFor();
   await context.setOffline(false);
 
+  const backupFile = {
+    schemaVersion: 2,
+    memories: [
+      { id: "memory-backup", title: "Memória do backup", date: "2026-02-01", category: "encontro", description: "Restaurada pelo teste." },
+      { id: "demo-start", demo: true, title: "Exemplo", date: "2025-10-31", description: "Demonstração antiga." }
+    ],
+    dreams: []
+  };
+  await page.locator("#import-data").setInputFiles({ name: "backup.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(backupFile)) });
+  await page.locator("#import-dialog").waitFor({ state: "visible" });
+  const importSummary = await page.locator("#import-summary").innerText();
+  if (!importSummary.includes("1 memória")) throw new Error(`Resumo do backup inesperado: ${importSummary}`);
+  await page.getByRole("button", { name: "Restaurar backup", exact: true }).click();
+  await page.locator("#import-dialog").waitFor({ state: "hidden" });
+  await page.getByText("Memória do backup", { exact: true }).first().waitFor();
+  if ((await page.locator("#memory-count").innerText()) !== "01") throw new Error("O backup restaurado não substituiu as memórias locais.");
+
   if (runtimeErrors.length) throw new Error(`Erros do navegador: ${runtimeErrors.join(" | ")}`);
 
   const mobileContext = await browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: "dark", isMobile: true });
@@ -132,7 +179,7 @@ try {
   await mobilePage.screenshot({ path: path.join(artifacts, "03-mobile.png"), fullPage: false });
   await mobileContext.close();
 
-  process.stdout.write("Fluxo validado: manifest, modo offline, acesso, memória, sonho, carta, cápsula, bloqueio, desbloqueio e layout móvel.\n");
+  process.stdout.write("Fluxo validado: manifest, modo offline, acesso, memória com foto reduzida, sonho, carta, cápsula, bloqueio, desbloqueio, restauração de backup e layout móvel.\n");
 } finally {
   await browser.close();
 }

@@ -47,15 +47,3 @@ export function calendarDifference(start, end) {
     seconds: Math.floor((remaining % 60000) / 1000)
   };
 }
-
-export async function fileToDataURL(file) {
-  if (!file) return "";
-  if (!file.type.startsWith("image/")) throw new Error("Escolha um arquivo de imagem.");
-  if (file.size > 1.5 * 1024 * 1024) throw new Error("A fotografia precisa ter até 1,5 MB nesta versão.");
-  return await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error("Não foi possível ler essa imagem."));
-    reader.readAsDataURL(file);
-  });
-}

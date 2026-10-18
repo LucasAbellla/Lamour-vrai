@@ -316,7 +316,7 @@
         <label class="field"><span>Data</span><input name="date" type="date" required></label>
         <label class="field"><span>Tipo de memória</span><select name="category"><option value="cotidiano">Cotidiano</option><option value="encontro">Encontro</option><option value="distancia">Distância</option><option value="viagem">Viagem</option><option value="especial">Data especial</option></select></label>
         <label class="field full"><span>Algumas palavras</span><textarea name="description" rows="4" maxlength="300" required placeholder="O que tornou esse momento especial?"></textarea></label>
-        <label class="photo-field full"><input name="photo" type="file" accept="image/*"><span class="photo-icon">＋</span><strong>Adicionar uma fotografia</strong><small>Opcional · até 1,5 MB nesta versão</small></label>
+        <label class="photo-field full"><input name="photo" type="file" accept="image/*"><span class="photo-icon">＋</span><strong>Adicionar uma fotografia</strong><small>Opcional · ajustamos o tamanho e removemos a localização automaticamente</small></label>
       </div>
       <p class="form-error" id="form-error" role="alert"></p>
       <div class="modal-actions"><button class="button ghost-button" value="cancel">Cancelar</button><button class="button primary" value="default" id="save-memory">Guardar memória</button></div>
@@ -432,6 +432,17 @@
       <h2 id="delete-memory-title">Excluir esta memória?</h2>
       <p>Ela também desaparecerá da constelação. Esta ação não pode ser desfeita, a menos que exista um backup.</p>
       <div class="modal-actions"><button class="button ghost-button" type="button" data-cancel-delete>Manter memória</button><button class="button danger-button" type="button" data-confirm-delete>Excluir definitivamente</button></div>
+    </article>
+  </dialog>
+
+  <dialog class="modal confirm-modal import-modal" id="import-dialog" aria-labelledby="import-title">
+    <article class="confirm-card">
+      <span aria-hidden="true">◇</span>
+      <h2 id="import-title">Levar para o cofre?</h2>
+      <p id="import-summary"></p>
+      <p class="import-note" id="import-note"></p>
+      <p class="form-error" id="import-error" role="alert"></p>
+      <div class="modal-actions"><button class="button ghost-button" type="button" data-cancel-import>Agora não</button><button class="button primary" type="button" data-confirm-import>Levar para o cofre</button></div>
     </article>
   </dialog>
 

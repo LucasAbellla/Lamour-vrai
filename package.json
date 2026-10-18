@@ -12,9 +12,10 @@
     "preview": "vite preview",
     "test:smoke": "node tests/smoke.mjs",
     "test:security": "node tests/security.mjs",
+    "test:backup": "node tests/backup.mjs",
     "desktop": "npm run build:local && electron .",
     "start": "npm run desktop",
-    "check": "npm run test:security && npm run build:local && node --check main.js"
+    "check": "npm run test:security && npm run test:backup && npm run build:local && node --check main.js"
   },
   "devDependencies": {
     "electron": "^44.5.1",
