@@ -23,6 +23,17 @@ export function createViewer(profile, role) {
   });
 }
 
+// Quem abre o app vê o prelúdio escrito pela pessoa amada; sem frases, não há prelúdio.
+export function preludeFor(profile, viewer) {
+  const prelude = profile.preludes?.[viewer.belovedRole];
+  if (!prelude?.lines?.length) return null;
+  return {
+    name: viewer.self,
+    lines: prelude.lines,
+    signature: prelude.signature || viewer.beloved
+  };
+}
+
 export function nameForRole(profile, role) {
   return normalizeRole(role) === "partner" ? profile.partnerTwo : profile.partnerOne;
 }

@@ -37,6 +37,20 @@ assert.equal(renamed.partnerOne, "Pessoa A");
 assert.equal(renamed.partnerNickname, "novo apelido");
 assert.equal(renamed.nickname, "apelido de A para B", "O apelido da outra pessoa continua intacto.");
 
+// ---------- Prelúdio ----------
+const { preludeFor } = await import("../src/core/perspective.js");
+const withPrelude = normalizeProfile({
+  ...profile,
+  preludes: { owner: { lines: ["  Primeira   frase ", "", "Segunda", "Terceira", "Quarta", "Quinta"], signature: "Assinatura de A" }, partner: { lines: [] } }
+});
+assert.deepEqual(withPrelude.preludes.owner.lines, ["Primeira frase", "Segunda", "Terceira", "Quarta"], "No máximo quatro frases, sem linhas vazias.");
+assert.equal(normalizeProfile({ preludes: { owner: { lines: ["x".repeat(300)] } } }).preludes.owner.lines[0].length, 120);
+assert.deepEqual(preludeFor(withPrelude, createViewer(withPrelude, "partner")), { name: "Pessoa B", lines: withPrelude.preludes.owner.lines, signature: "Assinatura de A" }, "A pessoa amada vê o prelúdio escrito por quem preparou o espaço.");
+assert.equal(preludeFor(withPrelude, createViewer(withPrelude, "owner")), null, "Sem frases escritas pela outra pessoa, não há prelúdio.");
+const unsigned = normalizeProfile({ ...profile, preludes: { partner: { lines: ["Oi"] } } });
+assert.equal(preludeFor(unsigned, createViewer(unsigned, "owner")).signature, "Pessoa B", "Sem assinatura, usa o nome de quem escreveu.");
+assert.deepEqual(normalizeProfile({ ...withPrelude, ...formToProfile(profileToForm(withPrelude, owner), owner) }).preludes, withPrelude.preludes, "Editar o perfil não apaga o prelúdio.");
+
 assert.equal(relationshipDay(profile, new Date(2025, 9, 31, 22)), 1);
 assert.equal(relationshipDay(profile, new Date(2026, 9, 18, 8)), 353);
 assert.deepEqual(anniversaryInfo(profile, new Date(2026, 9, 18)), { isAnniversary: false, completedYears: 0, volume: 1 });
@@ -92,4 +106,4 @@ assert.equal(empty.at(-1).quote, "E eu escolheria tudo outra vez.");
 const single = buildRetrospective({ state: { ...state, memories: [state.memories[1]], dreams: [], capsules: [] }, profile, viewer: owner, today: new Date(2026, 9, 18) });
 assert.deepEqual(single.map(chapter => chapter.key), ["prologue", "first", "epilogue"], "Capítulos sem dados suficientes são pulados.");
 
-process.stdout.write("História validada: perspectiva dos dois, edição do perfil sem trocas, aniversário, capítulos montados com dados reais e capítulos vazios pulados.\n");
+process.stdout.write("História validada: perspectiva dos dois, edição do perfil sem trocas, aniversário, capítulos montados com dados reais, capítulos vazios pulados e prelúdio de cada autor.\n");
