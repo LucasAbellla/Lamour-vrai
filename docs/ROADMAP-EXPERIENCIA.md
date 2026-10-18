@@ -13,6 +13,10 @@ O perfil do casal é um só e fica no cofre cifrado. A perspectiva vem da identi
 - Memórias registram quem as guardou (`createdBy`) e mostram "Guardada por …".
 - A autenticação individual e o segundo fator continuam obrigatórios.
 
+### Prelúdio
+
+Antes da capa, se a pessoa amada escreveu um prelúdio: estrelas se juntam e formam o nome de quem abre o app, as frases aparecem palavra por palavra e a assinatura é escrita à mão. Cada pessoa escreve o seu (até quatro frases e uma assinatura) em **Escrever o prelúdio**, abaixo do envelope ou na central rápida, com pré-visualização. O texto fica no perfil cifrado (`preludes.owner` / `preludes.partner`), sem mudança no banco. Tem botão "Pular", respeita a redução de movimento e dura cerca de 14 segundos.
+
 ### Capa do livro
 
 Ao abrir o cofre, aparece a capa: "L'amour vrai", o volume (um por ano de história), os nomes, o capítulo do dia e a dedicatória. No dia do aniversário, a capa anuncia o novo volume e oferece começar pela retrospectiva.

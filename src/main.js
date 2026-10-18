@@ -16,6 +16,8 @@ import { createDreamsFeature } from "./features/dreams/dreams.js";
 import { createLettersFeature } from "./features/letters/letters.js";
 import { createStoryFeature } from "./features/story/story.js";
 import { createOpening } from "./features/opening/opening.js";
+import { createPrelude } from "./features/prelude/prelude.js";
+import { createPreludeEditor } from "./features/prelude/prelude-editor.js";
 import { createExperience } from "./features/experience.js";
 import { createFeedback } from "./ui/feedback.js";
 import { setupAtmosphere, setupDynamicMotion, setupRevealAndNavigation } from "./ui/motion.js";
@@ -73,19 +75,23 @@ async function initializePrivateSpace(profile, { resumed = false } = {}) {
   });
   store.connectRemote();
 
+  const onProfileChanged = nextProfile => {
+    currentProfile = nextProfile;
+    refreshViewer();
+    stopClock();
+    stopClock = startRelationshipClock(currentProfile);
+    renderAll();
+  };
+  const prelude = createPrelude();
+  createPreludeEditor({ auth, feedback, getProfile, getViewer, prelude, onProfileChanged });
+
   createExperience({
     store,
     feedback,
     auth,
     getProfile,
     getViewer,
-    onProfileChanged(nextProfile) {
-      currentProfile = nextProfile;
-      refreshViewer();
-      stopClock();
-      stopClock = startRelationshipClock(currentProfile);
-      renderAll();
-    },
+    onProfileChanged,
     memories,
     capsules,
     dreams,
@@ -118,7 +124,8 @@ async function initializePrivateSpace(profile, { resumed = false } = {}) {
         refreshViewer();
         renderAll();
       },
-      openStory: () => story.open()
+      openStory: () => story.open(),
+      prelude
     }).show();
   }
 }

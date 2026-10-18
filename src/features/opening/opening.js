@@ -1,8 +1,9 @@
 import { escapeHTML } from "../../core/formatters.js";
-import { anniversaryInfo, relationshipDay, toRoman } from "../../core/perspective.js";
+import { anniversaryInfo, preludeFor, relationshipDay, toRoman } from "../../core/perspective.js";
 
 // A capa do livro: aparece a cada vez que o cofre é aberto e se abre para revelar a biblioteca.
-export function createOpening({ auth, getProfile, getViewer, onRoleChosen, openStory }) {
+// Se a pessoa amada escreveu um prelúdio, ele toca antes, por cima da capa.
+export function createOpening({ auth, getProfile, getViewer, onRoleChosen, openStory, prelude }) {
   const overlay = document.querySelector("#book-opening");
   const actions = document.querySelector("#book-actions");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -51,18 +52,27 @@ export function createOpening({ auth, getProfile, getViewer, onRoleChosen, openS
   actions.addEventListener("click", event => {
     const button = event.target.closest("[data-open-book]");
     if (!button || overlay.classList.contains("opening")) return;
-    if (button.dataset.role) onRoleChosen(button.dataset.role);
+    if (button.dataset.role) {
+      // No modo local a identidade só é conhecida aqui; o prelúdio toca depois da escolha.
+      onRoleChosen(button.dataset.role);
+      const text = preludeFor(getProfile(), getViewer());
+      close(button.dataset.then);
+      if (text) void prelude.play(text, { continueLabel: "Entrar →" });
+      return;
+    }
     close(button.dataset.then);
   });
 
-  function show() {
+  async function show() {
     fill();
     overlay.hidden = false;
     document.body.classList.add("book-locked");
     // Força o layout antes da transição; requestAnimationFrame não roda em abas em segundo plano.
     void overlay.offsetWidth;
     overlay.classList.add("visible");
-    setTimeout(() => actions.querySelector("button")?.focus(), 700);
+    const text = auth.canChooseRole ? null : preludeFor(getProfile(), getViewer());
+    if (text) await prelude.play(text);
+    setTimeout(() => actions.querySelector("button")?.focus(), text ? 100 : 700);
   }
 
   return { show };

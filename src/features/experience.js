@@ -204,6 +204,7 @@ export function createExperience({ store, feedback, auth, getProfile, getViewer,
       if (command === "constellation") document.querySelector("#constelacao").scrollIntoView({ behavior: "smooth" });
       if (command === "story") document.querySelector("[data-open-story]").click();
       if (command === "profile") profileEditor.open();
+      if (command === "prelude") document.querySelector("[data-open-prelude]").click();
       if (command === "install") document.querySelector("#install-app-footer").click();
       if (command === "lock") {
         void Promise.resolve(auth.lock()).finally(() => window.location.reload());

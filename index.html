@@ -238,7 +238,10 @@
           <p class="eyebrow" data-chapter="III" id="letter-eyebrow">UMA CARTA</p>
           <h2 id="letter-heading">Tem uma coisa que eu ainda prefiro te dizer <em>como uma carta.</em></h2>
           <p id="letter-intro">A carta fica guardada aqui, sem distrações e pronta para ser aberta novamente.</p>
-          <button class="button secondary" type="button" data-open-letter>Abrir o envelope</button>
+          <div class="letter-actions">
+            <button class="button secondary" type="button" data-open-letter>Abrir o envelope</button>
+            <button class="text-link" type="button" data-open-prelude>Escrever o prelúdio <span>✦</span></button>
+          </div>
         </div>
       </section>
 
@@ -469,6 +472,7 @@
         <button type="button" data-command="capsule"><span>◇</span><div><strong>Criar cápsula do tempo</strong><small>Guardar uma mensagem para o futuro</small></div><kbd>C</kbd></button>
         <button type="button" data-command="constellation"><span>⁙</span><div><strong>Abrir nossa constelação</strong><small>Ver as estrelas formadas pelas memórias</small></div><kbd>E</kbd></button>
         <button type="button" data-command="story"><span>∞</span><div><strong>Revisitar o primeiro ano</strong><small>Abrir a experiência comemorativa</small></div><kbd>1</kbd></button>
+        <button type="button" data-command="prelude"><span>✦</span><div><strong>Escrever o prelúdio</strong><small>As frases que aparecem antes da capa do livro</small></div><kbd>R</kbd></button>
         <button type="button" data-command="profile"><span>♡</span><div><strong>Detalhes do casal</strong><small>Nomes, data e frase particular</small></div><kbd>P</kbd></button>
         <button type="button" data-command="install"><span>⇩</span><div><strong>Instalar no celular</strong><small>Ver o passo a passo para Android e iPhone</small></div><kbd>I</kbd></button>
         <button type="button" data-command="lock"><span>⌁</span><div><strong>Bloquear nosso espaço</strong><small>Esconder os dados particulares neste aparelho</small></div><kbd>L</kbd></button>
@@ -510,6 +514,31 @@
       </div>
     </div>
   </section>
+
+  <section class="prelude" id="prelude" hidden aria-label="Prelúdio" aria-describedby="prelude-lines">
+    <canvas class="prelude-sky" id="prelude-sky" aria-hidden="true"></canvas>
+    <h2 class="sr-only" id="prelude-name"></h2>
+    <div class="prelude-content">
+      <div class="prelude-lines" id="prelude-lines" aria-live="polite"></div>
+      <p class="prelude-signature" id="prelude-signature"></p>
+      <button class="button secondary" type="button" id="prelude-continue" hidden>Abrir o livro →</button>
+    </div>
+    <button class="prelude-skip" type="button" id="prelude-skip">Pular</button>
+  </section>
+
+  <dialog class="modal" id="prelude-dialog" aria-labelledby="prelude-editor-title">
+    <form class="modal-shell" id="prelude-form">
+      <button class="modal-close" type="button" data-close-prelude aria-label="Fechar">×</button>
+      <p class="eyebrow">ANTES DA CAPA</p>
+      <h2 id="prelude-editor-title">O prelúdio</h2>
+      <p class="modal-intro" id="prelude-intro">Aparece ao abrir o app, antes da capa do livro.</p>
+      <label class="field full"><span>Suas frases · uma por linha, até quatro</span><textarea name="lines" rows="5" maxlength="520" placeholder="Uma frase por linha"></textarea></label>
+      <p class="prelude-counter" id="prelude-counter"></p>
+      <label class="field full"><span>Assinatura</span><input name="signature" maxlength="40"></label>
+      <p class="form-error" id="prelude-form-error" role="alert"></p>
+      <div class="modal-actions"><button class="button ghost-button" type="button" data-preview-prelude>Ver como vai aparecer</button><button class="button primary" type="submit">Guardar no cofre</button></div>
+    </form>
+  </dialog>
 
   <dialog class="modal install-modal" id="install-dialog" aria-labelledby="install-title">
     <article class="install-card">

@@ -128,6 +128,11 @@ try {
 
   await page.screenshot({ path: path.join(artifacts, "02-private-space.png"), fullPage: true });
 
+  await page.locator("[data-open-prelude]").click();
+  await page.locator('#prelude-form [name="lines"]').fill("Uma primeira frase de teste.\nE uma segunda, para fechar.");
+  await page.getByRole("button", { name: "Guardar no cofre", exact: true }).click();
+  await page.locator("#prelude-dialog").waitFor({ state: "hidden" });
+
   await page.keyboard.press("Control+K");
   await page.getByRole("button", { name: /Bloquear nosso espaço/ }).click();
   await page.locator("#unlock-panel").waitFor({ state: "visible" });
@@ -137,6 +142,16 @@ try {
 
   // Perspectiva da pessoa amada: mesma base, olhar invertido, nenhuma carta sobrescrita.
   await page.getByRole("button", { name: "Entrar como Pessoa B", exact: true }).click();
+  // Prelúdio escrito por Pessoa A: estrelas com o nome de B, frases palavra por palavra e assinatura.
+  await page.locator("#prelude.visible").waitFor();
+  if ((await page.locator("#prelude-name").textContent()) !== "Pessoa B") throw new Error("As estrelas precisam formar o nome de quem abre o app.");
+  await page.locator("#prelude-continue").waitFor({ state: "visible", timeout: 20000 });
+  const preludeText = await page.locator("#prelude-lines").innerText();
+  const signatureText = await page.locator("#prelude-signature").innerText();
+  if (!preludeText.includes("Uma primeira frase de teste.") || signatureText !== "— Pessoa A") throw new Error(`Prelúdio incompleto: ${preludeText} / ${signatureText}`);
+  await page.screenshot({ path: path.join(artifacts, "06-prelude.png"), fullPage: false });
+  await page.locator("#prelude-continue").click();
+  await page.locator("#prelude").waitFor({ state: "hidden" });
   await page.locator("#book-opening").waitFor({ state: "hidden" });
   await page.getByText("Pessoa B & Pessoa A", { exact: true }).first().waitFor();
   if ((await page.locator("#letter-eyebrow").innerText()).toUpperCase() !== "UMA CARTA DE PESSOA A") throw new Error("A carta recebida não aparece na perspectiva da pessoa amada.");
@@ -222,7 +237,7 @@ try {
   await mobilePage.screenshot({ path: path.join(artifacts, "03-mobile.png"), fullPage: false });
   await mobileContext.close();
 
-  process.stdout.write("Fluxo validado: manifest, modo offline, acesso, capa do livro, memória com foto reduzida, sonho, carta, cápsula, bloqueio, perspectiva da pessoa amada com as duas cartas, retrospectiva, restauração de backup e layout móvel.\n");
+  process.stdout.write("Fluxo validado: manifest, modo offline, acesso, capa do livro, memória com foto reduzida, sonho, carta, cápsula, bloqueio, prelúdio, perspectiva da pessoa amada com as duas cartas, retrospectiva, restauração de backup e layout móvel.\n");
 } finally {
   await browser.close();
 }
