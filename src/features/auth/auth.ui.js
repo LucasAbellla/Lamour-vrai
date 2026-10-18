@@ -5,6 +5,7 @@ export function setupAuthUI({ auth, onAuthenticated }) {
     "mfa-enroll": document.querySelector("#mfa-enroll-panel"),
     "mfa-challenge": document.querySelector("#mfa-challenge-panel"),
     setup: document.querySelector("#setup-panel"),
+    waiting: document.querySelector("#waiting-panel"),
     unlock: document.querySelector("#unlock-panel")
   };
   const setupForm = document.querySelector("#setup-form");
@@ -19,8 +20,8 @@ export function setupAuthUI({ auth, onAuthenticated }) {
     setTimeout(() => focusTarget?.focus(), 120);
   }
 
-  async function complete(profile) {
-    await onAuthenticated(profile);
+  async function complete(profile, options = {}) {
+    await onAuthenticated(profile, options);
     gate.classList.add("leaving");
     document.body.classList.remove("access-locked");
     document.querySelector("#app-shell").removeAttribute("aria-hidden");
@@ -66,9 +67,29 @@ export function setupAuthUI({ auth, onAuthenticated }) {
     }
   });
 
+  // A pessoa amada nunca prepara o espaço: ela só espera o cofre ficar pronto e entra com a frase.
   async function openVaultGate() {
-    setMode(await auth.hasAccount() ? "unlock" : "setup");
+    const hasAccount = await auth.hasAccount();
+    const isPartner = auth.mode === "secure" && auth.getRole() === "partner";
+    if (hasAccount) {
+      if (isPartner) {
+        document.querySelector("#unlock-eyebrow").textContent = "TUDO JÁ ESTÁ PRONTO";
+        document.querySelector("#unlock-description").textContent = "As memórias, as cartas e os sonhos já estão guardados para você. Falta só a frase que vocês combinaram — ela nunca sai deste aparelho.";
+      }
+      return setMode("unlock");
+    }
+    setMode(isPartner ? "waiting" : "setup");
   }
+
+  document.querySelector("[data-recheck-vault]").addEventListener("click", async event => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    try {
+      await openVaultGate();
+    } finally {
+      button.disabled = false;
+    }
+  });
 
   async function advanceSecureAccess(initialState) {
     const state = initialState || await auth.securityState();
@@ -101,12 +122,32 @@ export function setupAuthUI({ auth, onAuthenticated }) {
       submit.textContent = "Enviando…";
       try {
         await auth.requestAccessLink(signinForm.elements.email.value);
-        success.textContent = "Se este for um dos dois e-mails autorizados, o link chegou. Abra-o neste mesmo aparelho.";
+        success.textContent = "Se este for um dos dois e-mails autorizados, o e-mail chegou com um link e um código. Abra o link neste mesmo aparelho ou digite o código abaixo — no app instalado no celular, use o código.";
+        codeForm.hidden = false;
+        setTimeout(() => codeForm.elements.code.focus(), 120);
       } catch (issue) {
         error.textContent = issue.message;
       } finally {
         submit.disabled = false;
         submit.textContent = "Enviar link seguro";
+      }
+    });
+
+    const codeForm = document.querySelector("#signin-code-form");
+    codeForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      const error = document.querySelector("#signin-code-error");
+      const submit = codeForm.querySelector('[type="submit"]');
+      error.textContent = "";
+      submit.disabled = true;
+      try {
+        await auth.verifyEmailCode(signinForm.elements.email.value, codeForm.elements.code.value);
+        codeForm.reset();
+        await advanceSecureAccess();
+      } catch (issue) {
+        error.textContent = issue.message;
+      } finally {
+        submit.disabled = false;
       }
     });
 
@@ -148,7 +189,7 @@ export function setupAuthUI({ auth, onAuthenticated }) {
 
   const resumed = auth.tryResume();
   if (resumed) {
-    void complete(resumed);
+    void complete(resumed, { resumed: true });
     return;
   }
   setMode(auth.hasAccount() ? "unlock" : "setup");

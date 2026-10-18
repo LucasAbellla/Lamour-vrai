@@ -3,6 +3,7 @@ import { safeImage } from "./formatters.js";
 
 export const BACKUP_FEATURES = Object.freeze(["memories", "dreams", "capsules", "letters"]);
 const DREAM_STATUSES = new Set(["sonhando", "planejando", "para sempre"]);
+const ROLES = new Set(["owner", "partner"]);
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const ID_PATTERN = /^[\w-]{1,80}$/;
 
@@ -39,6 +40,7 @@ const normalizers = {
       description,
       favorite: item.favorite === true,
       photo: safeImage(item.photo),
+      ...(ROLES.has(item.createdBy) ? { createdBy: item.createdBy } : {}),
       createdAt: timestamp(item.createdAt),
       updatedAt: timestamp(item.updatedAt || item.createdAt)
     };
@@ -75,6 +77,7 @@ const normalizers = {
     return {
       id: identifier(item.id, "letter"),
       body,
+      author: item.author === "partner" ? "partner" : "owner",
       createdAt: timestamp(item.createdAt),
       updatedAt: timestamp(item.updatedAt || item.createdAt)
     };

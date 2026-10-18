@@ -1,8 +1,9 @@
 import { categoryNames, starPositions } from "../../data/defaults.js";
 import { escapeHTML, formatDate, safeImage } from "../../core/formatters.js";
 import { preparePhotoFile } from "../../core/photos.js";
+import { nameForRole } from "../../core/perspective.js";
 
-export function createMemoriesFeature({ store, feedback }) {
+export function createMemoriesFeature({ store, feedback, getProfile, getViewer }) {
   let activeFilter = "all";
   let memorySearch = "";
   let memoryView = "album";
@@ -87,6 +88,7 @@ export function createMemoriesFeature({ store, feedback }) {
       description: description.trim().slice(0, 300),
       favorite: false,
       photo: safeImage(photo),
+      createdBy: getViewer().role,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -104,6 +106,10 @@ export function createMemoriesFeature({ store, feedback }) {
     document.querySelector("#memory-detail-date").textContent = formatDate(memory.date);
     document.querySelector("#memory-detail-title").textContent = memory.title;
     document.querySelector("#memory-detail-description").textContent = memory.description;
+    const author = document.querySelector("#memory-detail-author");
+    const authorName = memory.createdBy ? nameForRole(getProfile(), memory.createdBy) : "";
+    author.hidden = !authorName;
+    author.textContent = authorName ? `Guardada por ${authorName}` : "";
     document.querySelector("#memory-detail-favorite").textContent = memory.favorite
       ? "♥ Remover das favoritas"
       : "♡ Guardar como favorita";

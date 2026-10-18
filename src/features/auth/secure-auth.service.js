@@ -119,6 +119,10 @@ export function createSecureAuthService(environment) {
     mode: "secure",
     isUnlocked: () => Boolean(profile && repository),
     getProfile: () => profile ? structuredClone(profile) : null,
+    // A identidade vem do banco: owner = quem preparou o cofre, partner = a pessoa amada.
+    canChooseRole: false,
+    getRole: () => membership?.role || "owner",
+    setRole() {},
     async initialize() {
       const state = await securityState();
       const url = new URL(window.location.href);
@@ -141,6 +145,13 @@ export function createSecureAuthService(environment) {
         email: normalizedEmail,
         options: { shouldCreateUser: false, emailRedirectTo: redirectTo }
       }), "Não foi possível enviar o link de acesso.");
+    },
+    // O mesmo e-mail traz um código. No app instalado no iPhone o link abre no Safari, então o código é o caminho.
+    async verifyEmailCode(email, code) {
+      const normalizedEmail = String(email).trim().toLocaleLowerCase("pt-BR");
+      const token = String(code).replace(/\s/g, "");
+      if (!/^\d{6,10}$/.test(token)) throw new Error("Digite os números do código que chegou no e-mail.");
+      ensure(await supabase.auth.verifyOtp({ email: normalizedEmail, token, type: "email" }), "O código não confere ou expirou. Peça um novo e-mail.");
     },
     securityState,
     startEnrollment,

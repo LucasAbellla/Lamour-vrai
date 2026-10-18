@@ -128,6 +128,18 @@ assert.throws(() => parseBackup("não é json"), /não parece ser um backup/);
 assert.throws(() => parseBackup({ qualquer: true }), /não parece ser um backup/);
 assert.equal(describeCounts({ memories: 2, dreams: 1, capsules: 0, letters: 1 }), "2 memórias, 1 sonho e 1 carta");
 
+const authored = parseBackup({
+  memories: [
+    { id: "m-b", title: "Guardada por B", date: "2026-01-02", description: "Autoria.", createdBy: "partner" },
+    { id: "m-x", title: "Autoria estranha", date: "2026-01-03", description: "Autoria.", createdBy: "admin" }
+  ],
+  letters: [{ id: "carta-b", body: "Carta de B.", author: "partner" }, { id: "carta-antiga", body: "Carta sem autoria." }]
+});
+assert.equal(authored.state.memories[0].createdBy, "partner", "A autoria da memória sobrevive à migração.");
+assert.equal("createdBy" in authored.state.memories[1], false, "Autorias desconhecidas são descartadas.");
+assert.equal(authored.state.letters[0].author, "partner", "A carta da pessoa amada continua sendo dela.");
+assert.equal(authored.state.letters[1].author, "owner", "Cartas antigas pertencem a quem preparou o espaço.");
+
 const mergedPreview = mergeBackup({ memories: [{ id: "memory-existente", title: "Original" }], dreams: [], capsules: [], letters: [] }, parsed.state);
 assert.equal(mergedPreview.skipped, 1);
 assert.equal(mergedPreview.state.memories.find(memory => memory.id === "memory-existente").title, "Original");
