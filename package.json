@@ -10,12 +10,14 @@
     "build": "vite build",
     "build:local": "vite build --mode development",
     "preview": "vite preview",
+    "verify:deploy": "node scripts/verify-deploy.mjs",
     "test:smoke": "node tests/smoke.mjs",
     "test:security": "node tests/security.mjs",
     "test:backup": "node tests/backup.mjs",
+    "test:story": "node tests/story.mjs",
     "desktop": "npm run build:local && electron .",
     "start": "npm run desktop",
-    "check": "npm run test:security && npm run test:backup && npm run build:local && node --check main.js"
+    "check": "npm run test:security && npm run test:backup && npm run test:story && npm run build:local && node --check main.js"
   },
   "devDependencies": {
     "electron": "^44.5.1",

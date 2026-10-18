@@ -1,53 +1,15 @@
 import { countItems, describeCounts, importBackupIntoStore, parseBackup } from "../core/backup.js";
 import { preparePhotoDataUrl } from "../core/photos.js";
+import { formToProfile, profileToForm } from "../core/perspective.js";
 
-export function createExperience({ store, feedback, auth, getProfile, onProfileChanged, memories, capsules, dreams, letters }) {
-  function setupStory() {
-    const dialog = document.querySelector("#story-dialog");
-    const content = document.querySelector("#story-content");
-    let index = 0;
-    const steps = () => {
-      const profile = getProfile();
-      const names = `${profile.partnerOne} ♥ ${profile.partnerTwo}`;
-      return [
-        ["Nossa história começou a guardar um novo tipo de memória.", "E cada uma delas ajuda a explicar quem somos juntos."],
-        ["Entre dias enormes e detalhes quase invisíveis…", "O amor encontrou um jeito de transformar tudo em lembrança."],
-        ["Fotografias, cartas, encontros e saudades agora têm um lugar.", "Um arquivo vivo, feito para continuar crescendo."],
-        [`Feliz caminho, ${profile.nickname || "meu amor"}.`, `Eu escolheria tudo outra vez. ${names}`]
-      ];
-    };
-    const draw = () => {
-      const currentSteps = steps();
-      document.querySelector("#story-text").textContent = currentSteps[index][0];
-      document.querySelector("#story-subtext").textContent = currentSteps[index][1];
-      document.querySelector("#story-counter").textContent = `${String(index + 1).padStart(2, "0")} / ${String(currentSteps.length).padStart(2, "0")}`;
-      document.querySelector("#story-progress").style.width = `${((index + 1) / currentSteps.length) * 100}%`;
-      document.querySelector("#story-next").textContent = index === currentSteps.length - 1 ? "Voltar ao nosso céu" : "Continuar →";
-    };
-    document.querySelectorAll("[data-open-story]").forEach(button => button.addEventListener("click", () => {
-      index = 0;
-      draw();
-      feedback.openDialog(dialog);
-    }));
-    document.querySelector("#story-next").addEventListener("click", () => {
-      if (index === steps().length - 1) return feedback.closeDialog(dialog);
-      content.classList.add("changing");
-      setTimeout(() => { index += 1; draw(); }, 260);
-      setTimeout(() => content.classList.remove("changing"), 550);
-    });
-    document.querySelector("[data-close-story]").addEventListener("click", () => feedback.closeDialog(dialog));
-  }
-
+export function createExperience({ store, feedback, auth, getProfile, getViewer, onProfileChanged, memories, capsules, dreams, letters }) {
   function setupProfileEditor() {
     const dialog = document.querySelector("#profile-dialog");
     const form = document.querySelector("#profile-form");
+    const fields = ["selfName", "belovedName", "nickname", "relationshipStart", "dedication"];
     const open = () => {
-      const profile = getProfile();
-      form.elements.partnerOne.value = profile.partnerOne;
-      form.elements.partnerTwo.value = profile.partnerTwo;
-      form.elements.nickname.value = profile.nickname;
-      form.elements.relationshipStart.value = profile.relationshipStart;
-      form.elements.dedication.value = profile.dedication;
+      const values = profileToForm(getProfile(), getViewer());
+      fields.forEach(field => { form.elements[field].value = values[field] || ""; });
       document.querySelector("#profile-form-error").textContent = "";
       feedback.openDialog(dialog);
     };
@@ -56,13 +18,8 @@ export function createExperience({ store, feedback, auth, getProfile, onProfileC
     form.addEventListener("submit", async event => {
       event.preventDefault();
       try {
-        const profile = await auth.updateProfile({
-          partnerOne: form.elements.partnerOne.value,
-          partnerTwo: form.elements.partnerTwo.value,
-          nickname: form.elements.nickname.value,
-          relationshipStart: form.elements.relationshipStart.value,
-          dedication: form.elements.dedication.value
-        });
+        const values = Object.fromEntries(fields.map(field => [field, form.elements[field].value]));
+        const profile = await auth.updateProfile(formToProfile(values, getViewer()));
         onProfileChanged(profile);
         feedback.toast("Dados do casal atualizados");
         feedback.closeDialog(dialog);
@@ -303,7 +260,6 @@ export function createExperience({ store, feedback, auth, getProfile, onProfileC
   }
 
   function initialize() {
-    setupStory();
     const profileEditor = setupProfileEditor();
     setupBackup();
     setupCommandPalette(profileEditor);

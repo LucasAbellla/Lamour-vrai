@@ -1,25 +1,30 @@
-# Próximas experiências planejadas
+# Experiências
 
-Este arquivo registra intenções já definidas que serão desenvolvidas em etapas futuras, sem antecipar decisões visuais ainda não especificadas.
+## Entregue
 
-## Acesso personalizado de Sofia
+### Acesso personalizado da Sofia
 
-Quando Sofia instalar o L'amour vrai, ela não deverá preencher novamente nomes, data do relacionamento, dedicação nem qualquer outro dado do perfil do casal.
+O perfil do casal é um só e fica no cofre cifrado. A perspectiva vem da identidade: no modo seguro, `owner` (quem prepara o cofre) e `partner` (a pessoa amada) vêm do banco; no modo local, a capa pergunta quem está entrando, para testes num aparelho só.
 
-O perfil compartilhado já estará no cofre cifrado. Depois de confirmar sua própria identidade e abrir o cofre, o aplicativo deverá:
+- A pessoa amada nunca vê o formulário de cadastro: antes de o cofre ficar pronto, ela vê "Seu lugar está sendo preparado"; depois, só a frase.
+- Na sessão dela, os nomes aparecem na ordem dela e quem preparou o espaço vira a "pessoa amada".
+- Cada um tem o próprio apelido para o outro (`nickname` e `partnerNickname`).
+- Cada pessoa tem a própria carta (`author`); cartas antigas, sem autoria, pertencem a quem preparou o espaço.
+- Memórias registram quem as guardou (`createdBy`) e mostram "Guardada por …".
+- A autenticação individual e o segundo fator continuam obrigatórios.
 
-- reconhecer que a sessão pertence a Sofia;
-- apresentar Sofia como a pessoa atual;
-- apresentar Lucas como “pessoa amada”;
-- carregar automaticamente todo o cadastro e as memórias compartilhadas;
-- manter a perspectiva inversa na sessão de Lucas;
-- nunca duplicar nem sobrescrever o perfil do casal no segundo aparelho.
+### Capa do livro
 
-A autenticação individual e o segundo fator continuarão obrigatórios. “Não preencher cadastro” significa eliminar a configuração afetiva repetida, não remover a proteção de identidade.
+Ao abrir o cofre, aparece a capa: "L'amour vrai", o volume (um por ano de história), os nomes, o capítulo do dia e a dedicatória. No dia do aniversário, a capa anuncia o novo volume e oferece começar pela retrospectiva.
 
-## Experiências ainda a especificar
+### Revisitar nossa história
 
-- Reformulação completa de “Revisitar nosso primeiro ano”.
-- Nova experiência apresentada ao abrir o aplicativo.
+Capítulos narrativos montados com os dados reais: o começo, a primeira memória, os números, os reencontros e a distância, o mês mais cheio, uma favorita com foto, o que ainda vem (sonhos e cápsulas) e um epílogo com a dedicatória e o convite para abrir a carta. Capítulos sem dados suficientes são pulados. Nenhum texto pessoal fica no código.
 
-Esses dois itens aguardam direção criativa e conteúdo antes da implementação.
+## Ideias para depois
+
+- Estantes e volumes para organizar as memórias.
+- Cartas "abra quando…".
+- "Nesta data": uma memória do mesmo dia em anos anteriores.
+- As duas versões da mesma memória.
+- Dicionário do casal, atlas da distância e o Lírio Vermelho que floresce.

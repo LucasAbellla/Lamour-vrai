@@ -1,3 +1,5 @@
+# Lido pelo Cloudflare Pages (e pelo Netlify). Quando várias regras casam com o mesmo caminho,
+# os cabeçalhos repetidos são unidos por vírgula; por isso o Cache-Control só aparece em regras que não se sobrepõem.
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
   Referrer-Policy: no-referrer
@@ -5,7 +7,17 @@
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-  Cache-Control: no-store
 
+# Página, service worker e manifest sempre revalidados, para as atualizações chegarem.
+/
+  Cache-Control: no-cache
+/index.html
+  Cache-Control: no-cache
+/sw.js
+  Cache-Control: no-cache
+/manifest.webmanifest
+  Cache-Control: no-cache
+
+# Arquivos com hash no nome nunca mudam.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable

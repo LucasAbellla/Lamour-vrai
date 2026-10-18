@@ -36,6 +36,11 @@
           <p class="form-success full" id="signin-success" role="status"></p>
           <button class="button primary full" type="submit">Enviar link seguro</button>
         </form>
+        <form class="access-form signin-code-form" id="signin-code-form" hidden>
+          <label class="field full"><span>Código do e-mail</span><input name="code" inputmode="numeric" pattern="[0-9]{6,10}" maxlength="10" autocomplete="one-time-code" required></label>
+          <p class="form-error full" id="signin-code-error" role="alert"></p>
+          <button class="button secondary full" type="submit">Entrar com o código</button>
+        </form>
         <p class="access-note"><span>◇</span> Novas contas não podem ser criadas por esta tela. Só os dois convites preparados previamente entram.</p>
       </article>
       <article class="access-card" id="mfa-enroll-panel" hidden>
@@ -79,8 +84,14 @@
         </form>
         <p class="access-note" id="setup-note"><span>◇</span> Guarde a frase de acesso. No modo local, ela protege a abertura neste aparelho.</p>
       </article>
+      <article class="access-card" id="waiting-panel" hidden>
+        <p class="eyebrow">QUASE LÁ</p>
+        <h2>Seu lugar está <em>sendo preparado.</em></h2>
+        <p>Seu acesso já está confirmado. Falta só a pessoa responsável terminar de arrumar o espaço de vocês — assim que ela abrir o cofre pela primeira vez, você entra direto, sem precisar cadastrar nada.</p>
+        <button class="button secondary full" type="button" data-recheck-vault>Verificar de novo</button>
+      </article>
       <article class="access-card" id="unlock-panel" hidden>
-        <p class="eyebrow">BEM-VINDOS DE VOLTA</p>
+        <p class="eyebrow" id="unlock-eyebrow">QUE BOM TER VOCÊ AQUI</p>
         <h2>Abrir <em>nosso espaço.</em></h2>
         <p id="unlock-description">As informações particulares só serão carregadas depois da frase do cofre.</p>
         <form class="access-form" id="unlock-form">
@@ -221,12 +232,12 @@
 
       <section class="letter-section" id="cartas" aria-labelledby="letter-title">
         <div class="letter-art reveal" aria-hidden="true">
-          <div class="envelope"><div class="envelope-paper">L · S</div></div>
+          <div class="envelope"><div class="envelope-paper" id="letter-initials">◇</div></div>
         </div>
         <div class="letter-copy reveal">
-          <p class="eyebrow" data-chapter="III">UMA CARTA PARA <span data-profile="partner-two">QUEM EU AMO</span></p>
-          <h2 id="letter-title">Tem uma coisa que eu ainda prefiro te dizer <em>como uma carta.</em></h2>
-          <p>A carta do primeiro ano ficará guardada aqui, sem distrações e pronta para ser aberta novamente quando vocês quiserem.</p>
+          <p class="eyebrow" data-chapter="III" id="letter-eyebrow">UMA CARTA</p>
+          <h2 id="letter-heading">Tem uma coisa que eu ainda prefiro te dizer <em>como uma carta.</em></h2>
+          <p id="letter-intro">A carta fica guardada aqui, sem distrações e pronta para ser aberta novamente.</p>
           <button class="button secondary" type="button" data-open-letter>Abrir o envelope</button>
         </div>
       </section>
@@ -332,6 +343,7 @@
         <p id="letter-body">Este espaço está esperando pelas palavras que só poderiam ter sido escritas por vocês.</p>
         <p class="letter-sign">Com amor,<br><strong id="letter-signature">—</strong></p>
         <button class="button secondary letter-edit" type="button" data-edit-letter>Escrever ou editar a carta</button>
+        <button class="letter-switch" type="button" data-switch-letter hidden></button>
       </div>
     </article>
   </dialog>
@@ -340,7 +352,7 @@
     <form class="modal-shell" id="letter-form">
       <button class="modal-close" type="button" data-close-letter-editor aria-label="Fechar editor">×</button>
       <p class="eyebrow">PALAVRAS SÓ DE VOCÊS</p>
-      <h2>Escrever a carta</h2>
+      <h2 id="letter-editor-title">Escrever a carta</h2>
       <p class="modal-intro">Sem frases prontas. Apenas as palavras que você gostaria que continuassem existindo.</p>
       <label class="field full"><span>Carta</span><textarea name="body" rows="12" maxlength="4000" required placeholder="Meu amor..."></textarea></label>
       <div class="modal-actions"><button class="button ghost-button" type="button" data-close-letter-editor>Cancelar</button><button class="button primary" type="submit">Guardar no cofre</button></div>
@@ -368,11 +380,11 @@
       <button class="modal-close" type="button" data-close-profile aria-label="Fechar">×</button>
       <p class="eyebrow">IDENTIDADE DO CASAL</p>
       <h2>Os detalhes que tornam tudo pessoal</h2>
-      <p class="modal-intro">Essas informações ficam protegidas no cofre local e dão sentido às experiências do aplicativo.</p>
+      <p class="modal-intro">Essas informações ficam protegidas no cofre e dão sentido às experiências do aplicativo. Os nomes e a frase são os mesmos para os dois; o apelido é só seu.</p>
       <div class="form-grid">
-        <label class="field"><span>Primeiro nome</span><input name="partnerOne" maxlength="40" required></label>
-        <label class="field"><span>Segundo nome</span><input name="partnerTwo" maxlength="40" required></label>
-        <label class="field"><span>Apelido carinhoso</span><input name="nickname" maxlength="60"></label>
+        <label class="field"><span>Seu nome</span><input name="selfName" maxlength="40" required></label>
+        <label class="field"><span>Nome de quem você ama</span><input name="belovedName" maxlength="40" required></label>
+        <label class="field"><span>Como você chama essa pessoa?</span><input name="nickname" maxlength="60"></label>
         <label class="field"><span>Início do relacionamento</span><input name="relationshipStart" type="date" required></label>
         <label class="field full"><span>Frase de vocês</span><textarea name="dedication" rows="3" maxlength="180"></textarea></label>
       </div>
@@ -390,6 +402,7 @@
         <time id="memory-detail-date"></time>
         <h2 id="memory-detail-title"></h2>
         <p id="memory-detail-description"></p>
+        <p class="memory-detail-author" id="memory-detail-author" hidden></p>
         <div class="memory-detail-actions">
           <button class="button secondary" type="button" id="memory-detail-favorite">♡ Guardar como favorita</button>
           <button class="icon-text-button" type="button" id="memory-detail-edit">Editar</button>
@@ -466,18 +479,37 @@
     </div>
   </dialog>
 
-  <dialog class="story-modal" id="story-dialog">
+  <dialog class="story-modal" id="story-dialog" aria-label="Revisitar nossa história">
     <div class="story-stage">
+      <div class="story-backdrop" id="story-backdrop" aria-hidden="true"></div>
       <button class="story-close" type="button" data-close-story aria-label="Fechar experiência">×</button>
-      <div class="story-progress"><span id="story-progress"></span></div>
-      <div class="story-content" id="story-content">
-        <p class="eyebrow">ANTES DE ENTRAR</p>
-        <h2 id="story-text">Há exatamente um ano, minha vida começou a guardar um novo tipo de memória.</h2>
-        <p id="story-subtext">E todas elas têm um pouco de você.</p>
+      <div class="story-progress" id="story-progress" aria-hidden="true"></div>
+      <div class="story-content" id="story-content" aria-live="polite">
+        <p class="eyebrow" id="story-eyebrow">Prólogo</p>
+        <h2 id="story-text"></h2>
+        <div class="story-stats" id="story-stats" hidden></div>
+        <p id="story-subtext"></p>
+        <div class="story-actions" id="story-actions" hidden></div>
       </div>
-      <div class="story-controls"><small id="story-counter">01 / 04</small><button class="button secondary" type="button" id="story-next">Continuar →</button></div>
+      <div class="story-controls"><button class="story-back" type="button" id="story-back" hidden>← Voltar</button><small id="story-counter">01 / 01</small><button class="button secondary" type="button" id="story-next">Continuar →</button></div>
     </div>
   </dialog>
+
+  <section class="book-opening" id="book-opening" hidden aria-label="Capa do nosso livro">
+    <div class="book" id="book">
+      <div class="book-pages" aria-hidden="true"></div>
+      <div class="book-cover">
+        <span class="book-ornament" aria-hidden="true">✦</span>
+        <p class="book-title">L'amour vrai</p>
+        <p class="book-volume" id="book-volume">Volume I</p>
+        <p class="book-names" id="book-names"></p>
+        <p class="book-chapter" id="book-chapter"></p>
+        <p class="book-dedication" id="book-dedication"></p>
+        <p class="book-greeting" id="book-greeting"></p>
+        <div class="book-actions" id="book-actions"></div>
+      </div>
+    </div>
+  </section>
 
   <dialog class="modal install-modal" id="install-dialog" aria-labelledby="install-title">
     <article class="install-card">

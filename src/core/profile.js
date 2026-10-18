@@ -1,13 +1,17 @@
 import { calendarDifference, formatCompactDate } from "./formatters.js";
+import { createViewer } from "./perspective.js";
 
-export function applyProfile(profile) {
-  const coupleName = `${profile.partnerOne} & ${profile.partnerTwo}`;
+// Os textos seguem a perspectiva de quem está olhando: "eu" primeiro, a pessoa amada depois.
+export function applyProfile(profile, viewer = createViewer(profile, "owner")) {
+  const coupleName = viewer.coupleName;
   const relationshipStart = new Date(`${profile.relationshipStart}T00:00:00`);
   const elapsedDays = Math.max(0, Math.floor((Date.now() - relationshipStart.getTime()) / 86400000));
   document.title = `L'amour vrai · ${coupleName}`;
   document.querySelectorAll("[data-profile='couple-name']").forEach(element => { element.textContent = coupleName; });
   document.querySelectorAll("[data-profile='partner-one']").forEach(element => { element.textContent = profile.partnerOne; });
   document.querySelectorAll("[data-profile='partner-two']").forEach(element => { element.textContent = profile.partnerTwo; });
+  document.querySelectorAll("[data-profile='self-name']").forEach(element => { element.textContent = viewer.self; });
+  document.querySelectorAll("[data-profile='beloved-name']").forEach(element => { element.textContent = viewer.beloved; });
   document.querySelectorAll("[data-profile='start-date']").forEach(element => { element.textContent = formatCompactDate(profile.relationshipStart).replaceAll("/", " · "); });
   document.querySelectorAll("[data-profile='start-year']").forEach(element => { element.textContent = profile.relationshipStart.slice(0, 4); });
   document.querySelectorAll("[data-profile='day-count']").forEach(element => { element.textContent = String(elapsedDays); });
@@ -15,7 +19,7 @@ export function applyProfile(profile) {
     element.textContent = profile.dedication || "E eu escolheria tudo outra vez.";
   });
   document.querySelectorAll("[data-profile='nickname']").forEach(element => {
-    element.textContent = profile.nickname || "meu amor";
+    element.textContent = viewer.nickname || "meu amor";
   });
 }
 

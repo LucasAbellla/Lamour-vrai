@@ -30,6 +30,7 @@ export function normalizeProfile(input = {}) {
     partnerOne: String(input.partnerOne || "").trim().slice(0, 40),
     partnerTwo: String(input.partnerTwo || "").trim().slice(0, 40),
     nickname: String(input.nickname || "").trim().slice(0, 60),
+    partnerNickname: String(input.partnerNickname || "").trim().slice(0, 60),
     dedication: String(input.dedication || "").trim().slice(0, 180),
     relationshipStart: start,
     anniversaryNumber: Math.max(1, Number(input.anniversaryNumber) || 1)

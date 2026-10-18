@@ -66,6 +66,13 @@ try {
   await page.locator('#setup-form [name="passphrase"]').fill("teste-local");
   await page.getByRole("button", { name: "Criar nosso espaço", exact: true }).click();
   await page.locator("#access-gate").waitFor({ state: "hidden" });
+  await page.locator("#book-opening.visible").waitFor();
+  const coverText = await page.locator(".book-cover").innerText();
+  // Início em 14/02/2024: dois anos completos, terceiro volume.
+  if (!/Volume III\b/i.test(coverText) || !/Capítulo \d+/.test(coverText) || !coverText.includes("Pessoa A & Pessoa B")) throw new Error(`Capa do livro incompleta: ${coverText}`);
+  await page.screenshot({ path: path.join(artifacts, "01b-book-cover.png"), fullPage: false });
+  await page.getByRole("button", { name: "Entrar como Pessoa A", exact: true }).click();
+  await page.locator("#book-opening").waitFor({ state: "hidden" });
 
   const headerButtons = page.locator(".topbar button");
   if (await headerButtons.count() !== 1) throw new Error("O cabeçalho deve manter somente o botão de guardar memória.");
@@ -127,7 +134,39 @@ try {
   await page.locator('#unlock-form [name="passphrase"]').fill("teste-local");
   await page.getByRole("button", { name: "Entrar no L'amour vrai", exact: true }).click();
   await page.locator("#access-gate").waitFor({ state: "hidden" });
-  await page.getByText("Pessoa A & Pessoa B", { exact: true }).first().waitFor();
+
+  // Perspectiva da pessoa amada: mesma base, olhar invertido, nenhuma carta sobrescrita.
+  await page.getByRole("button", { name: "Entrar como Pessoa B", exact: true }).click();
+  await page.locator("#book-opening").waitFor({ state: "hidden" });
+  await page.getByText("Pessoa B & Pessoa A", { exact: true }).first().waitFor();
+  if ((await page.locator("#letter-eyebrow").innerText()).toUpperCase() !== "UMA CARTA DE PESSOA A") throw new Error("A carta recebida não aparece na perspectiva da pessoa amada.");
+  await page.getByRole("button", { name: "Abrir o envelope", exact: true }).click();
+  await page.getByText("Uma carta de teste, guardada com cuidado dentro do novo cofre.", { exact: true }).waitFor();
+  if (await page.locator("[data-edit-letter]").isVisible()) throw new Error("A pessoa amada não pode editar a carta que recebeu.");
+  await page.locator("[data-switch-letter]").click();
+  await page.getByRole("button", { name: "Escrever ou editar a carta", exact: true }).click();
+  await page.locator('#letter-form [name="body"]').fill("A resposta, escrita do outro lado.");
+  await page.getByRole("button", { name: "Guardar no cofre", exact: true }).click();
+  await page.getByText("A resposta, escrita do outro lado.", { exact: true }).waitFor();
+  await page.getByRole("button", { name: "Fechar carta", exact: true }).click();
+  const letterAuthors = await page.evaluate(() => JSON.parse(localStorage.getItem("lamour-vrai-data-v2")).letters.map(letter => letter.author).sort().join(","));
+  if (letterAuthors !== "owner,partner") throw new Error(`As duas cartas precisam coexistir: ${letterAuthors}`);
+
+  await page.locator("[data-open-story]").first().click();
+  await page.locator("#story-dialog[open]").waitFor();
+  const storyTitles = [];
+  for (let step = 0; step < 12; step += 1) {
+    await page.waitForTimeout(600);
+    storyTitles.push(await page.locator("#story-eyebrow").innerText());
+    const next = page.locator("#story-next");
+    if ((await next.innerText()).startsWith("Voltar")) break;
+    await next.click();
+  }
+  const epilogue = await page.locator("#story-subtext").innerText();
+  if (!storyTitles.some(title => /A primeira página/i.test(title)) || epilogue !== "Pessoa B ♥ Pessoa A") throw new Error(`Retrospectiva incompleta: ${storyTitles.join(" | ")} / ${epilogue}`);
+  await page.getByRole("button", { name: "Abrir a carta de Pessoa A", exact: true }).waitFor();
+  await page.screenshot({ path: path.join(artifacts, "05-retrospective.png"), fullPage: false });
+  await page.getByRole("button", { name: "Fechar experiência", exact: true }).click();
 
   const nativeInstallAvailable = await page.locator("html").evaluate(element => element.classList.contains("can-install"));
   if (!nativeInstallAvailable) {
@@ -174,12 +213,16 @@ try {
   await mobilePage.locator('#setup-form [name="passphrase"]').fill("teste-local");
   await mobilePage.getByRole("button", { name: "Criar nosso espaço", exact: true }).click();
   await mobilePage.locator("#access-gate").waitFor({ state: "hidden" });
+  await mobilePage.locator("#book-opening.visible").waitFor();
+  await mobilePage.screenshot({ path: path.join(artifacts, "03a-mobile-cover.png"), fullPage: false });
+  await mobilePage.getByRole("button", { name: "Entrar como Pessoa A", exact: true }).click();
+  await mobilePage.locator("#book-opening").waitFor({ state: "hidden" });
   const hasHorizontalOverflow = await mobilePage.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
   if (hasHorizontalOverflow) throw new Error("A versão móvel apresenta rolagem horizontal indevida.");
   await mobilePage.screenshot({ path: path.join(artifacts, "03-mobile.png"), fullPage: false });
   await mobileContext.close();
 
-  process.stdout.write("Fluxo validado: manifest, modo offline, acesso, memória com foto reduzida, sonho, carta, cápsula, bloqueio, desbloqueio, restauração de backup e layout móvel.\n");
+  process.stdout.write("Fluxo validado: manifest, modo offline, acesso, capa do livro, memória com foto reduzida, sonho, carta, cápsula, bloqueio, perspectiva da pessoa amada com as duas cartas, retrospectiva, restauração de backup e layout móvel.\n");
 } finally {
   await browser.close();
 }

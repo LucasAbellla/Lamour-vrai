@@ -1,4 +1,5 @@
 import { normalizeProfile } from "../../data/defaults.js";
+import { normalizeRole } from "../../core/perspective.js";
 
 const encoder = new TextEncoder();
 
@@ -30,6 +31,7 @@ async function deriveKey(passphrase, salt) {
 export function createAuthService(namespace) {
   const accountKey = `${namespace}-local-account-v1`;
   const sessionKey = `${namespace}-session-v1`;
+  const roleKey = `${namespace}-viewer-v1`;
   let unlockedProfile = null;
 
   function readAccount() {
@@ -46,6 +48,12 @@ export function createAuthService(namespace) {
     isUnlocked: () => Boolean(unlockedProfile),
     getProfile: () => unlockedProfile ? structuredClone(unlockedProfile) : null,
     getStoreOptions: () => ({}),
+    // No modo local (um aparelho só) a pessoa escolhe na capa quem está entrando.
+    canChooseRole: true,
+    getRole: () => normalizeRole(sessionStorage.getItem(roleKey)),
+    setRole(role) {
+      sessionStorage.setItem(roleKey, normalizeRole(role));
+    },
     async setup(profileInput, passphrase) {
       if (String(passphrase).length < 4) throw new Error("A frase de acesso precisa ter pelo menos 4 caracteres.");
       const profile = normalizeProfile(profileInput);
@@ -58,6 +66,7 @@ export function createAuthService(namespace) {
         credential: { salt: toBase64(salt), hash }
       }));
       sessionStorage.setItem(sessionKey, "unlocked");
+      sessionStorage.setItem(roleKey, "owner");
       unlockedProfile = profile;
       return structuredClone(profile);
     },
@@ -86,6 +95,7 @@ export function createAuthService(namespace) {
     lock() {
       unlockedProfile = null;
       sessionStorage.removeItem(sessionKey);
+      sessionStorage.removeItem(roleKey);
     }
   };
 }
