@@ -142,10 +142,10 @@ try {
 
   // Perspectiva da pessoa amada: mesma base, olhar invertido, nenhuma carta sobrescrita.
   await page.getByRole("button", { name: "Entrar como Pessoa B", exact: true }).click();
-  // Prelúdio escrito por Pessoa A: estrelas com o nome de B, frases palavra por palavra e assinatura.
+  // Prelúdio escrito por Pessoa A: "eu te amo" em várias línguas formando o nome de B, frases palavra por palavra e assinatura.
   await page.locator("#prelude.visible").waitFor();
-  if ((await page.locator("#prelude-name").textContent()) !== "Pessoa B") throw new Error("As estrelas precisam formar o nome de quem abre o app.");
-  await page.locator("#prelude-continue").waitFor({ state: "visible", timeout: 20000 });
+  if ((await page.locator("#prelude-name").textContent()) !== "Pessoa B") throw new Error("O prelúdio precisa formar o nome de quem abre o app.");
+  await page.locator("#prelude-continue").waitFor({ state: "visible", timeout: 35000 });
   const preludeText = await page.locator("#prelude-lines").innerText();
   const signatureText = await page.locator("#prelude-signature").innerText();
   if (!preludeText.includes("Uma primeira frase de teste.") || signatureText !== "— Pessoa A") throw new Error(`Prelúdio incompleto: ${preludeText} / ${signatureText}`);

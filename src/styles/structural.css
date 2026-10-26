@@ -145,7 +145,7 @@ body.book-locked { overflow: hidden; }
 }
 .signin-code-form { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border-subtle); }
 
-/* Prelúdio: estrelas, frases e assinatura antes da capa */
+/* Prelúdio: "eu te amo" em várias línguas, o nome, frases e assinatura antes da capa */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 body.prelude-locked { overflow: hidden; }
 .prelude { position: fixed; z-index: 950; inset: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 30%, rgba(92, 26, 46, .5), transparent 60%), radial-gradient(ellipse at 50% 110%, rgba(220, 191, 145, .07), transparent 50%), #070305; opacity: 0; transition: opacity .9s var(--ease-enter); }
