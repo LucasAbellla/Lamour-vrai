@@ -30,7 +30,7 @@ export function createPreludeEditor({ auth, feedback, getProfile, getViewer, pre
     form.elements.lines.value = own.lines.join("\n");
     form.elements.signature.value = own.signature || viewer.self;
     form.elements.signature.placeholder = viewer.self;
-    document.querySelector("#prelude-intro").textContent = `Aparece para ${viewer.beloved} ao abrir o app, antes da capa: as estrelas formam o nome de ${viewer.beloved}, suas frases surgem palavra por palavra e a sua assinatura é escrita à mão. Sem frases, o app vai direto para a capa.`;
+    document.querySelector("#prelude-intro").textContent = `Aparece para ${viewer.beloved} ao abrir o app, antes da capa: "eu te amo" em dezenas de línguas se junta para formar o nome de ${viewer.beloved}, suas frases surgem palavra por palavra e a sua assinatura é escrita à mão. Sem frases, o app vai direto para a capa.`;
     document.querySelector("[data-preview-prelude]").textContent = `Ver como ${viewer.beloved} vai ver`;
     updateCounter();
     feedback.openDialog(dialog);
