@@ -15,7 +15,7 @@ O perfil do casal é um só e fica no cofre cifrado. A perspectiva vem da identi
 
 ### Prelúdio
 
-Antes da capa, se a pessoa amada escreveu um prelúdio: "eu te amo" em dezenas de línguas enche a tela e as palavras se desfazem em poeira de luz que forma o nome de quem abre o app, na mesma fonte; as frases aparecem palavra por palavra e a assinatura é escrita à mão. Cada pessoa escreve o seu (até quatro frases e uma assinatura) em **Escrever o prelúdio**, abaixo do envelope ou na central rápida, com pré-visualização. O texto fica no perfil cifrado (`preludes.owner` / `preludes.partner`), sem mudança no banco. Tem botão "Pular", respeita a redução de movimento e dura cerca de 20 segundos.
+Antes da capa, toda vez que a Sofia (a pessoa amada, papel `partner`) abre o cofre: "eu te amo" em dezenas de línguas enche a tela e as palavras se desfazem em poeira de luz que forma o nome de quem abre o app, na mesma fonte; as frases e a assinatura aparecem em seguida, quando foram escritas. Para quem preparou o espaço, o prelúdio só toca se a pessoa amada escreveu um. Cada pessoa escreve o seu (até quatro frases e uma assinatura) em **Escrever o prelúdio**, abaixo do envelope ou na central rápida, com pré-visualização. O texto fica no perfil cifrado (`preludes.owner` / `preludes.partner`), sem mudança no banco. Tem botão "Pular", respeita a redução de movimento e dura cerca de 20 segundos.
 
 ### Capa do livro
 

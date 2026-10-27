@@ -47,6 +47,7 @@ assert.deepEqual(withPrelude.preludes.owner.lines, ["Primeira frase", "Segunda",
 assert.equal(normalizeProfile({ preludes: { owner: { lines: ["x".repeat(300)] } } }).preludes.owner.lines[0].length, 120);
 assert.deepEqual(preludeFor(withPrelude, createViewer(withPrelude, "partner")), { name: "Pessoa B", lines: withPrelude.preludes.owner.lines, signature: "Assinatura de A" }, "A pessoa amada vê o prelúdio escrito por quem preparou o espaço.");
 assert.equal(preludeFor(withPrelude, createViewer(withPrelude, "owner")), null, "Sem frases escritas pela outra pessoa, não há prelúdio.");
+assert.deepEqual(preludeFor(profile, partner), { name: "Pessoa B", lines: [], signature: "" }, "Para a pessoa amada, o \"eu te amo\" formando o nome toca mesmo sem frases.");
 const unsigned = normalizeProfile({ ...profile, preludes: { partner: { lines: ["Oi"] } } });
 assert.equal(preludeFor(unsigned, createViewer(unsigned, "owner")).signature, "Pessoa B", "Sem assinatura, usa o nome de quem escreveu.");
 assert.deepEqual(normalizeProfile({ ...withPrelude, ...formToProfile(profileToForm(withPrelude, owner), owner) }).preludes, withPrelude.preludes, "Editar o perfil não apaga o prelúdio.");
