@@ -315,7 +315,8 @@ export function createPrelude() {
     cancelAnimationFrame(frame);
 
     nameLabel.textContent = name;
-    signature.textContent = `— ${signatureText}`;
+    signature.textContent = signatureText ? `— ${signatureText}` : "";
+    signature.hidden = !signatureText;
     signature.classList.toggle("written", reduceMotion);
     continueButton.textContent = continueLabel;
     continueButton.hidden = !reduceMotion;
@@ -328,8 +329,8 @@ export function createPrelude() {
     const nameAt = sky(name, reduceMotion);
     const linesEnd = writeLines(lines, nameAt + 600, reduceMotion);
     if (!reduceMotion) {
-      later(linesEnd + 200, () => signature.classList.add("written"));
-      later(linesEnd + SIGNATURE_MS + 600, () => {
+      if (signatureText) later(linesEnd + 200, () => signature.classList.add("written"));
+      later(signatureText ? linesEnd + SIGNATURE_MS + 600 : linesEnd + 800, () => {
         continueButton.hidden = false;
         continueButton.focus({ preventScroll: true });
       });

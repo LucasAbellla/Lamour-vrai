@@ -26,11 +26,13 @@ export function createViewer(profile, role) {
 // Quem abre o app vê o prelúdio escrito pela pessoa amada; sem frases, não há prelúdio.
 export function preludeFor(profile, viewer) {
   const prelude = profile.preludes?.[viewer.belovedRole];
-  if (!prelude?.lines?.length) return null;
+  const lines = prelude?.lines || [];
+  // Para quem recebeu o presente, o "eu te amo" que forma o nome toca sempre; as frases entram quando foram escritas.
+  if (!lines.length && !viewer.isPartner) return null;
   return {
     name: viewer.self,
-    lines: prelude.lines,
-    signature: prelude.signature || viewer.beloved
+    lines,
+    signature: lines.length ? prelude.signature || viewer.beloved : ""
   };
 }
 

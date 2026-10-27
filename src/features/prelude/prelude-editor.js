@@ -30,7 +30,7 @@ export function createPreludeEditor({ auth, feedback, getProfile, getViewer, pre
     form.elements.lines.value = own.lines.join("\n");
     form.elements.signature.value = own.signature || viewer.self;
     form.elements.signature.placeholder = viewer.self;
-    document.querySelector("#prelude-intro").textContent = `Aparece para ${viewer.beloved} ao abrir o app, antes da capa: "eu te amo" em dezenas de línguas se junta para formar o nome de ${viewer.beloved}, suas frases surgem palavra por palavra e a sua assinatura é escrita à mão. Sem frases, o app vai direto para a capa.`;
+    document.querySelector("#prelude-intro").textContent = `Aparece para ${viewer.beloved} ao abrir o app, antes da capa: "eu te amo" em dezenas de línguas se junta para formar o nome de ${viewer.beloved}, suas frases surgem palavra por palavra e a sua assinatura é escrita à mão. ${viewer.isPartner ? "Sem frases, o app vai direto para a capa." : `Sem frases, ${viewer.beloved} vê só o "eu te amo" formando o nome.`}`;
     document.querySelector("[data-preview-prelude]").textContent = `Ver como ${viewer.beloved} vai ver`;
     updateCounter();
     feedback.openDialog(dialog);
@@ -68,7 +68,7 @@ export function createPreludeEditor({ auth, feedback, getProfile, getViewer, pre
         preludes: { ...profile.preludes, [viewer.role]: { lines, signature: form.elements.signature.value } }
       });
       onProfileChanged(updated);
-      feedback.toast(lines.length ? "Prelúdio guardado no cofre" : "Prelúdio removido — o app abre direto na capa");
+      feedback.toast(lines.length ? "Prelúdio guardado no cofre" : viewer.isPartner ? "Prelúdio removido — o app abre direto na capa" : "Frases removidas — fica só o \"eu te amo\" formando o nome");
       feedback.closeDialog(dialog);
     } catch (issueOnSave) {
       error.textContent = issueOnSave.message;
