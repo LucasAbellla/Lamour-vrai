@@ -283,6 +283,7 @@ export function createPrelude() {
     finish = null;
     timers.forEach(clearTimeout);
     timers = [];
+    overlay.classList.remove("instant");
     overlay.classList.add("leaving");
     setTimeout(() => {
       cancelAnimationFrame(frame);
@@ -302,29 +303,34 @@ export function createPrelude() {
     }
   });
 
-  async function play({ name, lines, signature: signatureText }, { continueLabel = "Abrir o livro →" } = {}) {
+  // instant: a tela já surge escura, sem esmaecer, para o espaço não aparecer por baixo enquanto a entrada some.
+  async function play({ name, lines, signature: signatureText }, { continueLabel = "Entrar →", instant = false } = {}) {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    timers.forEach(clearTimeout);
+    timers = [];
+    cancelAnimationFrame(frame);
+
+    nameLabel.textContent = name;
+    linesBox.innerHTML = "";
+    signature.textContent = signatureText ? `— ${signatureText}` : "";
+    signature.hidden = !signatureText;
+    signature.classList.toggle("written", reduceMotion);
+    continueButton.textContent = continueLabel;
+    continueButton.hidden = !reduceMotion;
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+    overlay.classList.toggle("instant", instant);
+    overlay.hidden = false;
+    document.body.classList.add("prelude-locked");
+    void overlay.offsetWidth;
+    overlay.classList.add("visible");
+    skipButton.focus({ preventScroll: true });
+
     try {
       await Promise.all([
         document.fonts.load('80px "Pinyon Script"', `${name} ęěħ`),
         document.fonts.load('40px "Cormorant Garamond"', "Я")
       ]);
     } catch (_) {}
-    timers.forEach(clearTimeout);
-    timers = [];
-    cancelAnimationFrame(frame);
-
-    nameLabel.textContent = name;
-    signature.textContent = signatureText ? `— ${signatureText}` : "";
-    signature.hidden = !signatureText;
-    signature.classList.toggle("written", reduceMotion);
-    continueButton.textContent = continueLabel;
-    continueButton.hidden = !reduceMotion;
-    overlay.hidden = false;
-    document.body.classList.add("prelude-locked");
-    void overlay.offsetWidth;
-    overlay.classList.add("visible");
-    skipButton.focus({ preventScroll: true });
 
     const nameAt = sky(name, reduceMotion);
     const linesEnd = writeLines(lines, nameAt + 600, reduceMotion);

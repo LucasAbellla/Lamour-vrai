@@ -108,48 +108,19 @@
 .letter-switch { display: block; margin-top: 16px; padding: 6px 0; border: 0; background: none; color: #7a2338; font: italic 500 1.08rem/1.35 var(--serif); text-align: left; text-decoration: underline; text-decoration-color: rgba(122, 35, 56, .35); text-underline-offset: 4px; }
 .letter-switch:hover { text-decoration-color: currentColor; }
 
-/* Capa do livro */
-body.book-locked { overflow: hidden; }
-.book-opening { position: fixed; z-index: 900; inset: 0; display: grid; place-items: center; padding: 24px; overflow: auto; background: radial-gradient(ellipse at 50% 28%, rgba(92, 26, 46, .55), transparent 62%), radial-gradient(ellipse at 50% 100%, rgba(220, 191, 145, .06), transparent 50%), rgba(6, 3, 5, .97); opacity: 0; perspective: 1800px; transition: opacity .6s var(--ease-enter); }
-.book-opening.visible { opacity: 1; }
-.book { position: relative; width: min(430px, 88vw); min-height: min(600px, 84vh); transform: translateY(18px) scale(.97); transform-style: preserve-3d; transition: transform .9s var(--ease-emphasis); }
-.book-opening.visible .book { transform: none; }
-.book-pages { position: absolute; inset: 8px -8px -8px 8px; border-radius: 6px 18px 18px 6px; background: repeating-linear-gradient(90deg, #efe2d8 0 2px, #dfcdc0 2px 3px); box-shadow: 0 40px 90px rgba(0, 0, 0, .6); }
-.book-cover { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 38px 40px 46px; overflow: hidden; border-radius: 6px 20px 20px 6px; background: radial-gradient(circle at 50% 16%, rgba(220, 191, 145, .18), transparent 42%), radial-gradient(circle at 80% 100%, rgba(215, 71, 95, .22), transparent 45%), linear-gradient(160deg, #62203a, #2e0d18 55%, #1a0710); box-shadow: inset 12px 0 20px rgba(0, 0, 0, .38), 0 30px 80px rgba(0, 0, 0, .55); text-align: center; transform-origin: left center; backface-visibility: hidden; transition: transform 1.1s var(--ease-emphasis), opacity .9s ease; }
-.book-cover::before { content: ""; position: absolute; inset: 16px 16px 16px 26px; border: 1px solid rgba(220, 191, 145, .38); border-radius: 4px 14px 14px 4px; outline: 1px solid rgba(220, 191, 145, .12); outline-offset: 5px; pointer-events: none; }
-.book-cover::after { content: ""; position: absolute; left: 14px; top: 0; bottom: 0; width: 1px; background: linear-gradient(transparent, rgba(220, 191, 145, .45), transparent); }
-.book-ornament { color: var(--accent-gold); font-size: 1.15rem; text-shadow: 0 0 18px rgba(220, 191, 145, .65); }
-.book-title { margin: 14px 0 0; padding: 0 .12em .12em; font: 400 clamp(2.7rem, 10vw, 3.8rem)/1 var(--font-script); background: var(--gradient-gold); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.book-volume { margin: 10px 0 0; color: var(--accent-gold); font: 650 .6rem/1.6 var(--font-sans); letter-spacing: .3em; text-transform: uppercase; }
-.book-volume::before, .book-volume::after { content: ""; display: inline-block; width: 26px; height: 1px; margin: 0 12px; vertical-align: middle; background: rgba(220, 191, 145, .5); }
-.book-names { margin: 36px 0 0; color: var(--text-primary); font: 500 clamp(1.7rem, 6vw, 2.2rem)/1.1 var(--font-display); }
-.book-names span { color: var(--accent-gold); font-style: italic; }
-.book-chapter { margin: 10px 0 0; color: var(--accent-soft); font: italic 400 1.2rem/1.2 var(--font-display); }
-.book-dedication { max-width: 290px; margin: 26px 0 0; color: var(--text-secondary); font: italic 400 1.14rem/1.45 var(--font-display); }
-.book-greeting { margin: 30px 0 0; color: var(--text-primary); font-size: .84rem; font-weight: 600; }
-.book-actions { display: grid; gap: 10px; width: 100%; max-width: 270px; margin-top: 16px; }
-.book-actions .button { width: 100%; }
-.book-opening.opening { opacity: 0; transition: opacity .7s ease .4s; }
-.book-opening.opening .book { transform: scale(1.05) translateX(6%); transition: transform 1.1s var(--ease-emphasis); }
-.book-opening.opening .book-cover { opacity: 0; transform: rotateY(-108deg); }
-
 @media (max-width: 560px) {
-  .book { min-height: min(560px, 82vh); }
-  .book-cover { padding: 40px 26px 32px 36px; }
   .story-stats strong { font-size: 3rem; }
   #story-subtext { font-size: 1.22rem; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .book-opening.opening .book, .book-opening.opening .book-cover { transform: none; }
-}
 .signin-code-form { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border-subtle); }
 
-/* Prelúdio: "eu te amo" em várias línguas, o nome, frases e assinatura antes da capa */
+/* Prelúdio: "eu te amo" em várias línguas, o nome, frases e assinatura ao abrir o cofre */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 body.prelude-locked { overflow: hidden; }
 .prelude { position: fixed; z-index: 950; inset: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 30%, rgba(92, 26, 46, .5), transparent 60%), radial-gradient(ellipse at 50% 110%, rgba(220, 191, 145, .07), transparent 50%), #070305; opacity: 0; transition: opacity .9s var(--ease-enter); }
 .prelude.visible { opacity: 1; }
+.prelude.instant { transition: none; }
 .prelude.leaving { opacity: 0; transition-duration: .85s; }
 .prelude-sky { position: absolute; inset: 0; width: 100%; height: 100%; }
 .prelude-content { position: absolute; left: 50%; top: 47%; width: min(720px, calc(100vw - 40px)); transform: translateX(-50%); text-align: center; }

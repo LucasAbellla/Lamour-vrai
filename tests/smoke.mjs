@@ -65,14 +65,10 @@ try {
   await page.locator('#setup-form [name="dedication"]').fill("Nossa história favorita ainda está sendo escrita.");
   await page.locator('#setup-form [name="passphrase"]').fill("teste-local");
   await page.getByRole("button", { name: "Criar nosso espaço", exact: true }).click();
+  // Sem capa: quem cria o espaço entra direto, sem prelúdio, na própria perspectiva.
   await page.locator("#access-gate").waitFor({ state: "hidden" });
-  await page.locator("#book-opening.visible").waitFor();
-  const coverText = await page.locator(".book-cover").innerText();
-  // Início em 14/02/2024: dois anos completos, terceiro volume.
-  if (!/Volume III\b/i.test(coverText) || !/Capítulo \d+/.test(coverText) || !coverText.includes("Pessoa A & Pessoa B")) throw new Error(`Capa do livro incompleta: ${coverText}`);
-  await page.screenshot({ path: path.join(artifacts, "01b-book-cover.png"), fullPage: false });
-  await page.getByRole("button", { name: "Entrar como Pessoa A", exact: true }).click();
-  await page.locator("#book-opening").waitFor({ state: "hidden" });
+  if (await page.locator("#prelude").isVisible()) throw new Error("Sem prelúdio escrito, quem preparou o espaço entra direto.");
+  await page.getByText("Pessoa A & Pessoa B", { exact: true }).first().waitFor();
 
   const headerButtons = page.locator(".topbar button");
   if (await headerButtons.count() !== 1) throw new Error("O cabeçalho deve manter somente o botão de guardar memória.");
@@ -138,10 +134,12 @@ try {
   await page.locator("#unlock-panel").waitFor({ state: "visible" });
   await page.locator('#unlock-form [name="passphrase"]').fill("teste-local");
   await page.getByRole("button", { name: "Entrar no L'amour vrai", exact: true }).click();
-  await page.locator("#access-gate").waitFor({ state: "hidden" });
+  await page.locator("#role-panel").waitFor({ state: "visible" });
+  await page.screenshot({ path: path.join(artifacts, "01b-role.png"), fullPage: false });
 
   // Perspectiva da pessoa amada: mesma base, olhar invertido, nenhuma carta sobrescrita.
   await page.getByRole("button", { name: "Entrar como Pessoa B", exact: true }).click();
+  await page.locator("#access-gate").waitFor({ state: "hidden" });
   // Prelúdio escrito por Pessoa A: "eu te amo" em várias línguas formando o nome de B, frases palavra por palavra e assinatura.
   await page.locator("#prelude.visible").waitFor();
   if ((await page.locator("#prelude-name").textContent()) !== "Pessoa B") throw new Error("O prelúdio precisa formar o nome de quem abre o app.");
@@ -152,7 +150,6 @@ try {
   await page.screenshot({ path: path.join(artifacts, "06-prelude.png"), fullPage: false });
   await page.locator("#prelude-continue").click();
   await page.locator("#prelude").waitFor({ state: "hidden" });
-  await page.locator("#book-opening").waitFor({ state: "hidden" });
   await page.getByText("Pessoa B & Pessoa A", { exact: true }).first().waitFor();
   if ((await page.locator("#letter-eyebrow").innerText()).toUpperCase() !== "UMA CARTA DE PESSOA A") throw new Error("A carta recebida não aparece na perspectiva da pessoa amada.");
   await page.getByRole("button", { name: "Abrir o envelope", exact: true }).click();
@@ -228,16 +225,12 @@ try {
   await mobilePage.locator('#setup-form [name="passphrase"]').fill("teste-local");
   await mobilePage.getByRole("button", { name: "Criar nosso espaço", exact: true }).click();
   await mobilePage.locator("#access-gate").waitFor({ state: "hidden" });
-  await mobilePage.locator("#book-opening.visible").waitFor();
-  await mobilePage.screenshot({ path: path.join(artifacts, "03a-mobile-cover.png"), fullPage: false });
-  await mobilePage.getByRole("button", { name: "Entrar como Pessoa A", exact: true }).click();
-  await mobilePage.locator("#book-opening").waitFor({ state: "hidden" });
   const hasHorizontalOverflow = await mobilePage.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
   if (hasHorizontalOverflow) throw new Error("A versão móvel apresenta rolagem horizontal indevida.");
   await mobilePage.screenshot({ path: path.join(artifacts, "03-mobile.png"), fullPage: false });
   await mobileContext.close();
 
-  process.stdout.write("Fluxo validado: manifest, modo offline, acesso, capa do livro, memória com foto reduzida, sonho, carta, cápsula, bloqueio, prelúdio, perspectiva da pessoa amada com as duas cartas, retrospectiva, restauração de backup e layout móvel.\n");
+  process.stdout.write("Fluxo validado: manifest, modo offline, acesso sem capa, memória com foto reduzida, sonho, carta, cápsula, bloqueio, escolha de quem entra, prelúdio, perspectiva da pessoa amada com as duas cartas, retrospectiva, restauração de backup e layout móvel.\n");
 } finally {
   await browser.close();
 }

@@ -4,7 +4,7 @@
 
 ### Acesso personalizado da Sofia
 
-O perfil do casal é um só e fica no cofre cifrado. A perspectiva vem da identidade: no modo seguro, `owner` (quem prepara o cofre) e `partner` (a pessoa amada) vêm do banco; no modo local, a capa pergunta quem está entrando, para testes num aparelho só.
+O perfil do casal é um só e fica no cofre cifrado. A perspectiva vem da identidade: no modo seguro, `owner` (quem prepara o cofre) e `partner` (a pessoa amada) vêm do banco; no modo local, a entrada pergunta quem está abrindo o espaço, para testes num aparelho só.
 
 - A pessoa amada nunca vê o formulário de cadastro: antes de o cofre ficar pronto, ela vê "Seu lugar está sendo preparado"; depois, só a frase.
 - Na sessão dela, os nomes aparecem na ordem dela e quem preparou o espaço vira a "pessoa amada".
@@ -15,11 +15,11 @@ O perfil do casal é um só e fica no cofre cifrado. A perspectiva vem da identi
 
 ### Prelúdio
 
-Antes da capa, toda vez que a Sofia (a pessoa amada, papel `partner`) abre o cofre: "eu te amo" em dezenas de línguas enche a tela e as palavras se desfazem em poeira de luz que forma o nome de quem abre o app, na mesma fonte; as frases e a assinatura aparecem em seguida, quando foram escritas. Para quem preparou o espaço, o prelúdio só toca se a pessoa amada escreveu um. Cada pessoa escreve o seu (até quatro frases e uma assinatura) em **Escrever o prelúdio**, abaixo do envelope ou na central rápida, com pré-visualização. O texto fica no perfil cifrado (`preludes.owner` / `preludes.partner`), sem mudança no banco. Tem botão "Pular", respeita a redução de movimento e dura cerca de 20 segundos.
+Toda vez que a Sofia (a pessoa amada, papel `partner`) abre o cofre, a tela escurece, "eu te amo" em dezenas de línguas se espalha por ela e as palavras se desfazem em poeira de luz que forma o nome de quem abre o app, na mesma fonte; as frases e a assinatura aparecem em seguida, quando foram escritas. Para quem preparou o espaço, o prelúdio só toca se a pessoa amada escreveu um. Cada pessoa escreve o seu (até quatro frases e uma assinatura) em **Escrever o prelúdio**, abaixo do envelope ou na central rápida, com pré-visualização. O texto fica no perfil cifrado (`preludes.owner` / `preludes.partner`), sem mudança no banco. Tem botão "Pular", respeita a redução de movimento e dura cerca de 20 segundos.
 
-### Capa do livro
+### Sem capa na abertura
 
-Ao abrir o cofre, aparece a capa: "L'amour vrai", o volume (um por ano de história), os nomes, o capítulo do dia e a dedicatória. No dia do aniversário, a capa anuncia o novo volume e oferece começar pela retrospectiva.
+A capa do livro saiu em 29/10: ao abrir o cofre, o espaço aparece direto, ou depois do prelúdio para quem tem um. A retrospectiva continua no botão da própria seção.
 
 ### Revisitar nossa história
 

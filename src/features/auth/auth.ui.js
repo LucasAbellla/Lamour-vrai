@@ -1,3 +1,5 @@
+import { escapeHTML } from "../../core/formatters.js";
+
 export function setupAuthUI({ auth, onAuthenticated }) {
   const gate = document.querySelector("#access-gate");
   const panels = {
@@ -6,12 +8,15 @@ export function setupAuthUI({ auth, onAuthenticated }) {
     "mfa-challenge": document.querySelector("#mfa-challenge-panel"),
     setup: document.querySelector("#setup-panel"),
     waiting: document.querySelector("#waiting-panel"),
-    unlock: document.querySelector("#unlock-panel")
+    unlock: document.querySelector("#unlock-panel"),
+    role: document.querySelector("#role-panel")
   };
   const setupForm = document.querySelector("#setup-form");
   const unlockForm = document.querySelector("#unlock-form");
   const setupError = document.querySelector("#setup-error");
   const unlockError = document.querySelector("#unlock-error");
+  const roleActions = document.querySelector("#role-actions");
+  let profileAwaitingRole = null;
 
   function setMode(mode) {
     Object.entries(panels).forEach(([name, panel]) => { panel.hidden = name !== mode; });
@@ -58,13 +63,35 @@ export function setupAuthUI({ auth, onAuthenticated }) {
     const submit = unlockForm.querySelector('[type="submit"]');
     submit.disabled = true;
     try {
-      await complete(await auth.unlock(unlockForm.elements.passphrase.value));
+      const profile = await auth.unlock(unlockForm.elements.passphrase.value);
       unlockForm.reset();
+      if (auth.canChooseRole) chooseRole(profile);
+      else await complete(profile);
     } catch (error) {
       unlockError.textContent = error.message;
     } finally {
       submit.disabled = false;
     }
+  });
+
+  // No modo local (um aparelho só), a pessoa diz quem está entrando antes de o espaço abrir.
+  function chooseRole(profile) {
+    profileAwaitingRole = profile;
+    roleActions.innerHTML = [
+      `<button class="button primary full" type="button" data-role="owner">Entrar como ${escapeHTML(profile.partnerOne)}</button>`,
+      `<button class="button secondary full" type="button" data-role="partner">Entrar como ${escapeHTML(profile.partnerTwo)}</button>`
+    ].join("");
+    setMode("role");
+    setTimeout(() => roleActions.querySelector("button")?.focus(), 120);
+  }
+
+  roleActions.addEventListener("click", event => {
+    const button = event.target.closest("[data-role]");
+    if (!button || !profileAwaitingRole) return;
+    const profile = profileAwaitingRole;
+    profileAwaitingRole = null;
+    auth.setRole(button.dataset.role);
+    void complete(profile);
   });
 
   // A pessoa amada nunca prepara o espaço: ela só espera o cofre ficar pronto e entra com a frase.

@@ -21,9 +21,16 @@ export function createEmptyState() {
   };
 }
 
+// No campo de data, um ano digitado com dois dígitos ("25") vira o ano 0025; aqui ele volta a ser 2025.
+export function fixShortYear(value) {
+  const match = /^(\d{4})(-\d{2}-\d{2})$/.exec(value || "");
+  if (!match || Number(match[1]) >= 100) return value;
+  return `${2000 + Number(match[1])}${match[2]}`;
+}
+
 export function normalizeProfile(input = {}) {
   const start = /^\d{4}-\d{2}-\d{2}$/.test(input.relationshipStart || "")
-    ? input.relationshipStart
+    ? fixShortYear(input.relationshipStart)
     : new Date().toISOString().slice(0, 10);
 
   return {

@@ -48,7 +48,7 @@ export function createAuthService(namespace) {
     isUnlocked: () => Boolean(unlockedProfile),
     getProfile: () => unlockedProfile ? structuredClone(unlockedProfile) : null,
     getStoreOptions: () => ({}),
-    // No modo local (um aparelho só) a pessoa escolhe na capa quem está entrando.
+    // No modo local (um aparelho só) a pessoa escolhe na entrada quem está abrindo o espaço.
     canChooseRole: true,
     getRole: () => normalizeRole(sessionStorage.getItem(roleKey)),
     setRole(role) {
