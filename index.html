@@ -247,6 +247,7 @@
           <div class="letter-actions">
             <button class="button secondary" type="button" data-open-letter>Abrir o envelope</button>
             <button class="text-link" type="button" data-open-prelude>Escrever o prelúdio <span>✦</span></button>
+            <button class="text-link" type="button" data-open-pages hidden>Escrever as páginas <span>✎</span></button>
           </div>
         </div>
       </section>
@@ -478,6 +479,8 @@
         <button type="button" data-command="capsule"><span>◇</span><div><strong>Criar cápsula do tempo</strong><small>Guardar uma mensagem para o futuro</small></div><kbd>C</kbd></button>
         <button type="button" data-command="constellation"><span>⁙</span><div><strong>Abrir nossa constelação</strong><small>Ver as estrelas formadas pelas memórias</small></div><kbd>E</kbd></button>
         <button type="button" data-command="story"><span>∞</span><div><strong>Revisitar o primeiro ano</strong><small>Abrir a experiência comemorativa</small></div><kbd>1</kbd></button>
+        <button type="button" data-command="pages" data-owner-only><span>✎</span><div><strong>Escrever as páginas do primeiro ano</strong><small>Data, frase, texto e imagem de cada página</small></div><kbd>G</kbd></button>
+        <button type="button" data-command="radio"><span>♪</span><div><strong>Nossa rádio</strong><small>As músicas guardadas para vocês</small></div><kbd>M</kbd></button>
         <button type="button" data-command="prelude"><span>✦</span><div><strong>Escrever o prelúdio</strong><small>As frases que aparecem ao abrir o app</small></div><kbd>R</kbd></button>
         <button type="button" data-command="profile"><span>♡</span><div><strong>Detalhes do casal</strong><small>Nomes, data e frase particular</small></div><kbd>P</kbd></button>
         <button type="button" data-command="install"><span>⇩</span><div><strong>Instalar no celular</strong><small>Ver o passo a passo para Android e iPhone</small></div><kbd>I</kbd></button>
@@ -530,6 +533,24 @@
     </form>
   </dialog>
 
+  <dialog class="modal pages-modal" id="pages-dialog" aria-labelledby="pages-title">
+    <form class="modal-shell" id="pages-form">
+      <button class="modal-close" type="button" data-close-pages aria-label="Fechar">×</button>
+      <p class="eyebrow">REVISITAR O PRIMEIRO ANO</p>
+      <h2 id="pages-title">As páginas</h2>
+      <p class="modal-intro">Cada página mostra a data no alto, a frase principal, um texto menor e uma imagem de fundo, nesta ordem de datas. Na frase principal, _assim_ fica em itálico e *assim* ganha o degradê.</p>
+      <ol class="pages-list" id="pages-list" hidden></ol>
+      <div class="form-grid">
+        <label class="field"><span>Data</span><input name="date" type="date" min="1900-01-01" required></label>
+        <label class="photo-field"><input name="photo" type="file" accept="image/*"><span class="photo-icon">＋</span><strong>Escolher a imagem de fundo</strong><small>Ajustamos o tamanho e removemos a localização</small></label>
+        <label class="field full"><span>Frase principal</span><textarea name="title" rows="2" maxlength="160" required placeholder="Ex.: O dia em que _talvez_ tudo tenha *mudado*."></textarea></label>
+        <label class="field full"><span>Texto menor</span><textarea name="text" rows="3" maxlength="420" placeholder="O que você lembra desse dia"></textarea></label>
+      </div>
+      <p class="form-error" id="pages-form-error" role="alert"></p>
+      <div class="modal-actions"><button class="button ghost-button" type="button" data-new-page>Nova página</button><button class="button ghost-button" type="button" data-preview-pages>Ver a retrospectiva</button><button class="button primary" type="submit" id="save-page">Guardar página</button></div>
+    </form>
+  </dialog>
+
   <dialog class="modal install-modal" id="install-dialog" aria-labelledby="install-title">
     <article class="install-card">
       <button class="modal-close" type="button" data-close-install aria-label="Fechar instruções">×</button>
@@ -560,6 +581,32 @@
     <button class="button primary compact" type="button" id="pwa-update-now">Atualizar agora</button>
     <button class="update-dismiss" type="button" id="pwa-update-later" aria-label="Atualizar depois">×</button>
   </aside>
+
+  <div class="radio" id="radio" hidden>
+    <section class="radio-panel" id="radio-panel" hidden aria-label="Nossa rádio">
+      <header class="radio-head"><p class="eyebrow">NOSSA RÁDIO</p><button class="radio-icon" type="button" data-close-radio aria-label="Fechar a rádio">×</button></header>
+      <div class="radio-dial"><span class="radio-band">FM</span><canvas id="radio-wave" width="300" height="44" aria-hidden="true"></canvas></div>
+      <div class="radio-row"><div class="radio-freq" id="radio-freq">♥</div><div class="radio-name"><strong id="radio-title">—</strong><small id="radio-artist"></small></div></div>
+      <div class="radio-controls">
+        <button class="radio-icon" type="button" data-radio-step="-1" aria-label="Música anterior">‹</button>
+        <button class="radio-power" type="button" id="radio-play" aria-label="Tocar">▶</button>
+        <button class="radio-icon" type="button" data-radio-step="1" aria-label="Próxima música">›</button>
+        <input type="range" id="radio-volume" min="0" max="1" step="0.02" value="0.7" aria-label="Volume">
+      </div>
+      <ol class="radio-list" id="radio-list" hidden></ol>
+      <form class="radio-add" id="radio-add" hidden>
+        <label class="radio-file"><input name="audio" type="file" accept="audio/*,.mp3,.m4a"><span>＋ Escolher uma música</span></label>
+        <div class="radio-add-fields"><input name="title" maxlength="80" placeholder="Nome da música" aria-label="Nome da música"><input name="artist" maxlength="80" placeholder="Artista" aria-label="Artista"></div>
+        <p class="form-error" id="radio-error" role="alert"></p>
+        <button class="button primary" type="submit">Guardar no cofre</button>
+      </form>
+      <p class="radio-note">Só as músicas escolhidas para vocês, cifradas no cofre.</p>
+    </section>
+    <button class="radio-pill" type="button" id="radio-toggle" aria-expanded="false" aria-controls="radio-panel">
+      <span class="radio-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span id="radio-pill-label">Nossa rádio</span>
+    </button>
+  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script type="module" src="/src/main.js"></script>

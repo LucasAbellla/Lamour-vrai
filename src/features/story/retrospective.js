@@ -28,7 +28,25 @@ function memoryChapter(memory, name) {
   };
 }
 
+function epilogue(profile, viewer, hasLetterForViewer, eyebrow) {
+  return {
+    key: "epilogue",
+    eyebrow,
+    quote: profile.dedication || DEFAULT_DEDICATION,
+    text: `${viewer.self} ♥ ${viewer.beloved}`,
+    action: hasLetterForViewer ? { type: "letter", label: `Abrir a carta de ${viewer.beloved}` } : null
+  };
+}
+
 export function buildRetrospective({ state, profile, viewer, hasLetterForViewer = false, today = new Date() }) {
+  // Com páginas escritas, a história é contada por elas: a data no alto, a frase, o texto e a imagem de fundo.
+  if (profile.pages?.length) {
+    return [
+      ...profile.pages.map(page => ({ key: page.id, page: true, eyebrow: formatDate(page.date), title: page.title, text: page.text, photoAsset: page.photo })),
+      epilogue(profile, viewer, hasLetterForViewer, "")
+    ];
+  }
+
   const memories = [...state.memories].filter(memory => memory.date).sort(byDate);
   const day = relationshipDay(profile, today);
   const elapsed = day - 1;
@@ -104,17 +122,11 @@ export function buildRetrospective({ state, profile, viewer, hasLetterForViewer 
     });
   }
 
-  chapters.push({
-    key: "epilogue",
-    eyebrow: "Epílogo",
-    quote: profile.dedication || DEFAULT_DEDICATION,
-    text: `${viewer.self} ♥ ${viewer.beloved}`,
-    action: hasLetterForViewer ? { type: "letter", label: `Abrir a carta de ${viewer.beloved}` } : null
-  });
+  chapters.push(epilogue(profile, viewer, hasLetterForViewer, "Epílogo"));
 
   let number = 0;
   return chapters.map(chapter => {
-    if (chapter.eyebrow) return chapter;
+    if (chapter.eyebrow !== undefined) return chapter;
     number += 1;
     return { ...chapter, eyebrow: `Capítulo ${toRoman(number)} · ${chapter.label}` };
   });

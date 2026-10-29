@@ -187,9 +187,11 @@ export function createExperience({ store, feedback, auth, getProfile, getViewer,
     const list = document.querySelector("#command-list");
     const empty = document.querySelector("#command-empty");
     const visibleButtons = () => [...list.querySelectorAll("button")].filter(button => !button.hidden);
+    // As páginas do primeiro ano são escritas por quem preparou o espaço; para a pessoa amada o atalho não aparece.
+    const available = button => !(button.dataset.ownerOnly !== undefined && getViewer().isPartner);
     const open = () => {
       input.value = "";
-      list.querySelectorAll("button").forEach(button => { button.hidden = false; });
+      list.querySelectorAll("button").forEach(button => { button.hidden = !available(button); });
       empty.hidden = true;
       feedback.openDialog(dialog);
       setTimeout(() => input.focus(), 80);
@@ -205,6 +207,8 @@ export function createExperience({ store, feedback, auth, getProfile, getViewer,
       if (command === "story") document.querySelector("[data-open-story]").click();
       if (command === "profile") profileEditor.open();
       if (command === "prelude") document.querySelector("[data-open-prelude]").click();
+      if (command === "pages") document.querySelector("[data-open-pages]").click();
+      if (command === "radio") document.querySelector("#radio-toggle").click();
       if (command === "install") document.querySelector("#install-app-footer").click();
       if (command === "lock") {
         void Promise.resolve(auth.lock()).finally(() => window.location.reload());
@@ -215,7 +219,7 @@ export function createExperience({ store, feedback, auth, getProfile, getViewer,
     input.addEventListener("input", () => {
       const query = input.value.trim().toLocaleLowerCase("pt-BR");
       list.querySelectorAll("button").forEach(button => {
-        button.hidden = Boolean(query && !button.textContent.toLocaleLowerCase("pt-BR").includes(query));
+        button.hidden = !available(button) || Boolean(query && !button.textContent.toLocaleLowerCase("pt-BR").includes(query));
       });
       empty.hidden = visibleButtons().length > 0;
     });

@@ -94,6 +94,41 @@ export function createSecureVaultRepository({ supabase, coupleId, userId, dataKe
     return hydrated;
   }
 
+  // Fotos das páginas e músicas da rádio: cifradas aqui e guardadas no mesmo armazenamento das fotos das memórias.
+  function mediaPath(id) {
+    return `${coupleId}/${id}.bin`;
+  }
+
+  async function saveMedia(id, blob) {
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    const encrypted = await encryptBytes(dataKey, bytes, `media:${coupleId}:${id}`);
+    bytes.fill(0);
+    const upload = await supabase.storage
+      .from("memory-media")
+      .upload(mediaPath(id), decodeBase64(encrypted.ciphertext), {
+        contentType: "application/octet-stream",
+        cacheControl: "0",
+        upsert: true
+      });
+    throwIfError(upload, "Não foi possível guardar o arquivo no cofre.");
+    return { path: mediaPath(id), iv: encrypted.iv, mime: blob.type };
+  }
+
+  async function loadMedia(id, asset) {
+    if (asset?.path !== mediaPath(id)) throw new Error("Este arquivo não pertence a este cofre.");
+    const download = await supabase.storage.from("memory-media").download(asset.path);
+    const blob = throwIfError(download, "Não foi possível abrir o arquivo protegido.");
+    const bytes = await decryptBytes(dataKey, {
+      ciphertext: encodeBase64(new Uint8Array(await blob.arrayBuffer())),
+      iv: asset.iv
+    }, `media:${coupleId}:${id}`);
+    return new Blob([bytes], { type: asset.mime });
+  }
+
+  async function removeMedia(id) {
+    throwIfError(await supabase.storage.from("memory-media").remove([mediaPath(id)]), "Não foi possível apagar o arquivo do cofre.");
+  }
+
   async function decryptRow(row) {
     const item = await decryptJson(dataKey, {
       ciphertext: row.ciphertext,
@@ -226,5 +261,5 @@ export function createSecureVaultRepository({ supabase, coupleId, userId, dataKe
     };
   }
 
-  return { loadState, persist, saveProfile, loadProfile, subscribe };
+  return { loadState, persist, saveProfile, loadProfile, subscribe, media: { save: saveMedia, load: loadMedia, remove: removeMedia } };
 }

@@ -19,7 +19,15 @@ Toda vez que a Sofia (a pessoa amada, papel `partner`) abre o cofre, a tela escu
 
 ### Sem capa na abertura
 
-A capa do livro saiu em 29/10: ao abrir o cofre, o espaço aparece direto, ou depois do prelúdio para quem tem um. A retrospectiva continua no botão da própria seção.
+A capa do livro saiu em 29/10: ao abrir o cofre, o espaço aparece direto, ou depois do prelúdio para quem tem um.
+
+### Do prelúdio para a retrospectiva, com música
+
+Para a Sofia, o toque que encerra o prelúdio liga a **Nossa rádio** e, da própria tela escura, surge "Revisitar o primeiro ano". A rádio toca só as músicas guardadas por quem preparou o espaço: o arquivo é cifrado no aparelho e vai para o armazenamento privado do cofre, como as fotos; no perfil cifrado fica só a referência (`songs`). Tem tocar e pausar, anterior e próxima, volume e a lista das músicas; o mostrador mostra a data do começo como frequência.
+
+### Páginas do primeiro ano
+
+Quem preparou o espaço escreve as páginas em **Escrever as páginas** (ou na central rápida): data, frase principal com `_itálico_` e `*degradê*`, texto menor e imagem de fundo. Com páginas escritas, a retrospectiva é contada por elas, em ordem de data e com a data no lugar do rótulo dourado, e termina no epílogo com a dedicatória e a carta. As imagens são reduzidas, cifradas e guardadas como as fotos das memórias; o perfil cifrado guarda só a referência (`pages`). Sem páginas, vale a retrospectiva automática abaixo.
 
 ### Revisitar nossa história
 

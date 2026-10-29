@@ -8,6 +8,13 @@ export function escapeHTML(value = "") {
   })[character]);
 }
 
+// Na frase principal das páginas, _assim_ fica em itálico e *assim* ganha o degradê.
+export function formatEmphasis(value = "") {
+  return escapeHTML(value)
+    .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+    .replace(/_([^_]+)_/g, '<i class="plain-italic">$1</i>');
+}
+
 export function safeImage(value = "") {
   return /^data:image\/(png|jpe?g|webp|gif);base64,/i.test(value) ? value : "";
 }
