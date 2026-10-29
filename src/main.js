@@ -5,6 +5,7 @@ import "./styles/structural.css";
 
 import { assertEnvironment, environment } from "./config/environment.js";
 import { createStore } from "./core/store.js";
+import { createMediaLibrary } from "./core/media.js";
 import { applyProfile, startRelationshipClock } from "./core/profile.js";
 import { createViewer, preludeFor } from "./core/perspective.js";
 import { createAuthService } from "./features/auth/auth.service.js";
@@ -15,6 +16,8 @@ import { createCapsulesFeature } from "./features/capsules/capsules.js";
 import { createDreamsFeature } from "./features/dreams/dreams.js";
 import { createLettersFeature } from "./features/letters/letters.js";
 import { createStoryFeature } from "./features/story/story.js";
+import { createPagesEditor } from "./features/story/pages-editor.js";
+import { createRadio } from "./features/radio/radio.js";
 import { createPrelude } from "./features/prelude/prelude.js";
 import { createPreludeEditor } from "./features/prelude/prelude-editor.js";
 import { createExperience } from "./features/experience.js";
@@ -28,6 +31,8 @@ const auth = environment.authMode === "supabase"
   ? createSecureAuthService(environment)
   : createAuthService(environment.storageNamespace);
 const feedback = createFeedback();
+// Fotos das páginas e músicas da rádio já abertas nesta visita.
+const library = createMediaLibrary(() => auth.getMedia());
 let currentProfile = null;
 let currentViewer = null;
 let stopClock = () => {};
@@ -52,7 +57,7 @@ async function initializePrivateSpace(profile, { resumed = false } = {}) {
   const capsules = createCapsulesFeature({ store, feedback });
   const dreams = createDreamsFeature({ store, feedback });
   const letters = createLettersFeature({ store, feedback, getProfile, getViewer });
-  const story = createStoryFeature({ store, feedback, getProfile, getViewer, letters });
+  const story = createStoryFeature({ store, feedback, getProfile, getViewer, letters, library });
 
   memories.initialize();
   capsules.initialize();
@@ -74,15 +79,20 @@ async function initializePrivateSpace(profile, { resumed = false } = {}) {
   });
   store.connectRemote();
 
+  const profileListeners = [];
   const onProfileChanged = nextProfile => {
     currentProfile = nextProfile;
     refreshViewer();
     stopClock();
     stopClock = startRelationshipClock(currentProfile);
     renderAll();
+    profileListeners.forEach(listener => listener());
   };
   const prelude = createPrelude();
   createPreludeEditor({ auth, feedback, getProfile, getViewer, prelude, onProfileChanged });
+  createPagesEditor({ auth, feedback, getProfile, getViewer, library, onProfileChanged, story });
+  const radio = createRadio({ auth, feedback, getProfile, getViewer, library, onProfileChanged });
+  profileListeners.push(radio.refresh);
 
   createExperience({
     store,
@@ -113,9 +123,17 @@ async function initializePrivateSpace(profile, { resumed = false } = {}) {
   document.documentElement.dataset.environment = environment.name;
 
   // Ao abrir o cofre, o espaço aparece direto. Se houver prelúdio para quem entra, a tela fica escura
-  // e ele toca antes; recarregar a página no meio da visita não o repete.
+  // e ele toca antes; recarregar a página no meio da visita não o repete. Quando ele termina, a rádio
+  // começa e, para a pessoa amada, a retrospectiva surge da própria tela escura.
   const opening = resumed ? null : preludeFor(currentProfile, currentViewer);
-  if (opening) void prelude.play(opening, { instant: true });
+  if (opening) {
+    const intoStory = currentViewer.isPartner;
+    radio.prepare();
+    if (intoStory) story.prepare();
+    void prelude.play(opening, { instant: true, handOff: intoStory, onLeave: radio.startAfterPrelude }).then(() => {
+      if (intoStory) story.open({ fadeIn: true });
+    });
+  }
 }
 
 feedback.setupDialogs();

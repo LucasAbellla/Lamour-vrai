@@ -220,4 +220,19 @@ assert.throws(
 assert.equal(localStore.getState().memories.length, 1, "Sem espaço, o estado volta ao último salvo.");
 assert.equal(JSON.parse(storage.getItem("local-data-v2")).memories.length, 1);
 
-process.stdout.write("Backup validado: limpeza do arquivo, mesclagem sem perdas, cofre cifrado, fotos protegidas, reimportação sem duplicar, nova tentativa e limite do navegador.\n");
+// ---------- Fotos das páginas e músicas da rádio ----------
+const songBytes = new Uint8Array(Buffer.from("trecho-de-musica-".repeat(64)));
+const songAsset = await repository.media.save("song-1", new Blob([songBytes], { type: "audio/mpeg" }));
+assert.deepEqual(Object.keys(songAsset).sort(), ["iv", "mime", "path"]);
+assert.equal(songAsset.path, "casal-1/song-1.bin");
+assert.equal(Buffer.from(supabase.files.get("casal-1/song-1.bin")).includes(Buffer.from("trecho-de-musica-")), false, "A música precisa estar cifrada no armazenamento.");
+const reopenedSong = await reopened.media.load("song-1", songAsset);
+assert.equal(reopenedSong.type, "audio/mpeg");
+assert.deepEqual(new Uint8Array(await reopenedSong.arrayBuffer()), songBytes, "A música abre igual no outro aparelho.");
+await assert.rejects(reopened.media.load("song-2", songAsset), /não pertence/, "Um arquivo não abre com o nome de outro.");
+supabase.files.set("casal-1/song-2.bin", supabase.files.get("casal-1/song-1.bin"));
+await assert.rejects(reopened.media.load("song-2", { ...songAsset, path: "casal-1/song-2.bin" }), "Copiar o arquivo para outro nome não engana a cifra.");
+await reopened.media.remove("song-1");
+assert.equal(supabase.files.has("casal-1/song-1.bin"), false);
+
+process.stdout.write("Backup validado: limpeza do arquivo, mesclagem sem perdas, cofre cifrado, fotos protegidas, reimportação sem duplicar, nova tentativa, limite do navegador e músicas cifradas.\n");

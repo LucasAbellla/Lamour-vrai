@@ -116,6 +116,7 @@ export function createPrelude() {
   let timers = [];
   let frame = 0;
   let finish = null;
+  let leaveOptions = {};
 
   const later = (delay, callback) => timers.push(setTimeout(callback, delay));
 
@@ -277,21 +278,30 @@ export function createPrelude() {
     return cursor;
   }
 
+  function hide() {
+    cancelAnimationFrame(frame);
+    overlay.hidden = true;
+    overlay.classList.remove("visible", "leaving", "handing-off");
+    document.body.classList.remove("prelude-locked");
+  }
+
+  // handOff: só o céu e as palavras somem; o fundo escuro fica até a próxima tela terminar de surgir por cima.
   function close() {
     if (!finish) return;
     const done = finish;
+    const { handOff, onLeave } = leaveOptions;
     finish = null;
     timers.forEach(clearTimeout);
     timers = [];
+    // Roda ainda dentro do toque que fechou o prelúdio (o navegador só deixa a música começar assim).
+    onLeave?.();
     overlay.classList.remove("instant");
-    overlay.classList.add("leaving");
+    overlay.classList.add(handOff ? "handing-off" : "leaving");
     setTimeout(() => {
-      cancelAnimationFrame(frame);
-      overlay.hidden = true;
-      overlay.classList.remove("visible", "leaving");
-      document.body.classList.remove("prelude-locked");
+      if (!handOff) hide();
       done();
-    }, 900);
+      if (handOff) setTimeout(() => { if (!finish) hide(); }, 1600);
+    }, handOff ? 650 : 900);
   }
 
   continueButton.addEventListener("click", close);
@@ -304,11 +314,13 @@ export function createPrelude() {
   });
 
   // instant: a tela já surge escura, sem esmaecer, para o espaço não aparecer por baixo enquanto a entrada some.
-  async function play({ name, lines, signature: signatureText }, { continueLabel = "Entrar →", instant = false } = {}) {
+  // onLeave é chamado no toque que fecha o prelúdio; handOff mantém a tela escura para a próxima tela (veja close).
+  async function play({ name, lines, signature: signatureText }, { continueLabel = "Entrar →", instant = false, handOff = false, onLeave = null } = {}) {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     timers.forEach(clearTimeout);
     timers = [];
     cancelAnimationFrame(frame);
+    leaveOptions = { handOff, onLeave };
 
     nameLabel.textContent = name;
     linesBox.innerHTML = "";

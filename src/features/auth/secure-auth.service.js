@@ -186,9 +186,13 @@ export function createSecureAuthService(environment) {
     },
     async updateProfile(profileInput) {
       if (!repository || !profile) throw new Error("Abra o cofre antes de editar o perfil.");
-      profile = await repository.saveProfile({ ...profile, ...profileInput });
+      // Parte da versão mais recente do cofre, para não desfazer o que a outra pessoa salvou nesse meio-tempo.
+      const latest = await repository.loadProfile();
+      profile = await repository.saveProfile({ ...(latest || profile), ...profileInput });
       return structuredClone(profile);
     },
+    // Fotos das páginas e músicas da rádio, cifradas com a mesma chave do cofre.
+    getMedia: () => repository?.media || null,
     getStoreOptions() {
       if (!repository || !initialState) throw new Error("O cofre precisa estar aberto.");
       return {

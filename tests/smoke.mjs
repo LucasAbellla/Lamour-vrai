@@ -21,6 +21,32 @@ async function createLargePhoto() {
   return photo;
 }
 
+// Imagem de fundo pequena para uma página da retrospectiva.
+function createBackdrop() {
+  return sharp({ create: { width: 900, height: 600, channels: 3, background: { r: 120, g: 30, b: 60 } } }).jpeg().toBuffer();
+}
+
+// Dois segundos de um tom em WAV, no lugar de uma música de verdade.
+function createTone(seconds = 2) {
+  const rate = 8000;
+  const samples = rate * seconds;
+  const buffer = Buffer.alloc(44 + samples * 2);
+  buffer.write("RIFF", 0);
+  buffer.writeUInt32LE(36 + samples * 2, 4);
+  buffer.write("WAVEfmt ", 8);
+  buffer.writeUInt32LE(16, 16);
+  buffer.writeUInt16LE(1, 20);
+  buffer.writeUInt16LE(1, 22);
+  buffer.writeUInt32LE(rate, 24);
+  buffer.writeUInt32LE(rate * 2, 28);
+  buffer.writeUInt16LE(2, 32);
+  buffer.writeUInt16LE(16, 34);
+  buffer.write("data", 36);
+  buffer.writeUInt32LE(samples * 2, 40);
+  for (let sample = 0; sample < samples; sample += 1) buffer.writeInt16LE(Math.round(Math.sin(sample / rate * 2 * Math.PI * 440) * 3000), 44 + sample * 2);
+  return buffer;
+}
+
 const edgeCandidates = [
   "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
   "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe"
@@ -124,6 +150,49 @@ try {
 
   await page.screenshot({ path: path.join(artifacts, "02-private-space.png"), fullPage: true });
 
+  // Sem páginas escritas, a retrospectiva se monta sozinha com o que está guardado.
+  await page.locator("[data-open-story]").first().click();
+  await page.locator("#story-dialog[open]").waitFor();
+  const storyTitles = [];
+  for (let step = 0; step < 12; step += 1) {
+    await page.waitForTimeout(600);
+    storyTitles.push(await page.locator("#story-eyebrow").innerText());
+    const next = page.locator("#story-next");
+    if ((await next.innerText()).startsWith("Voltar")) break;
+    await next.click();
+  }
+  const automaticEpilogue = await page.locator("#story-subtext").innerText();
+  if (!storyTitles.some(title => /A primeira página/i.test(title)) || automaticEpilogue !== "Pessoa A ♥ Pessoa B") throw new Error(`Retrospectiva incompleta: ${storyTitles.join(" | ")} / ${automaticEpilogue}`);
+  await page.screenshot({ path: path.join(artifacts, "05-retrospective.png"), fullPage: false });
+  await page.getByRole("button", { name: "Fechar experiência", exact: true }).click();
+
+  // Quem preparou o espaço escreve as páginas: data, frase com itálico e degradê, texto e imagem de fundo.
+  await page.locator("[data-open-pages]").first().click();
+  await page.locator("#pages-dialog[open]").waitFor();
+  await page.locator('#pages-form [name="date"]').fill("2025-10-04");
+  await page.locator('#pages-form [name="title"]').fill("Tudo começou em 04 de outubro de 2025.");
+  await page.locator('#pages-form [name="text"]').fill("Uma página de teste com imagem de fundo.");
+  await page.locator('#pages-form [name="photo"]').setInputFiles({ name: "fundo.jpg", mimeType: "image/jpeg", buffer: await createBackdrop() });
+  await page.locator("#save-page").click();
+  await page.locator("#pages-list li").first().waitFor();
+  await page.locator('#pages-form [name="date"]').fill("2025-10-07");
+  await page.locator('#pages-form [name="title"]').fill("O momento em que _talvez_ eu tenha me *apaixonado* por ti.");
+  await page.locator('#pages-form [name="text"]').fill("Segunda página, sem imagem.");
+  await page.locator("#save-page").click();
+  await page.locator("#pages-list li:nth-child(2)").waitFor();
+  await page.screenshot({ path: path.join(artifacts, "07-pages-editor.png"), fullPage: false });
+  await page.locator("#pages-dialog [data-close-pages]").click();
+
+  // A rádio só toca o que foi guardado no cofre.
+  await page.locator("#radio-toggle").click();
+  await page.locator("#radio-panel").waitFor({ state: "visible" });
+  await page.locator('#radio-add [name="audio"]').setInputFiles({ name: "Música de teste - Artista de teste.wav", mimeType: "audio/wav", buffer: createTone() });
+  if ((await page.locator('#radio-add [name="title"]').inputValue()) !== "Música de teste") throw new Error("O nome da música deveria vir do nome do arquivo.");
+  await page.locator('#radio-add [type="submit"]').click();
+  await page.locator("#radio-list li").first().waitFor();
+  await page.screenshot({ path: path.join(artifacts, "08-radio.png"), fullPage: false });
+  await page.locator("[data-close-radio]").click();
+
   await page.locator("[data-open-prelude]").click();
   await page.locator('#prelude-form [name="lines"]').fill("Uma primeira frase de teste.\nE uma segunda, para fechar.");
   await page.getByRole("button", { name: "Guardar no cofre", exact: true }).click();
@@ -148,8 +217,29 @@ try {
   const signatureText = await page.locator("#prelude-signature").innerText();
   if (!preludeText.includes("Uma primeira frase de teste.") || signatureText !== "— Pessoa A") throw new Error(`Prelúdio incompleto: ${preludeText} / ${signatureText}`);
   await page.screenshot({ path: path.join(artifacts, "06-prelude.png"), fullPage: false });
+  // Depois do prelúdio, a música começa e a retrospectiva surge da tela escura, já nas páginas escritas.
   await page.locator("#prelude-continue").click();
+  await page.locator("#story-dialog.from-prelude[open]").waitFor();
   await page.locator("#prelude").waitFor({ state: "hidden" });
+  if ((await page.locator("#story-eyebrow").textContent()) !== "04 de outubro de 2025") throw new Error("A primeira página precisa mostrar a data no alto.");
+  await page.locator("#story-backdrop.has-photo").waitFor();
+  await page.locator("#radio.playing").waitFor({ timeout: 10000 });
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: path.join(artifacts, "06b-story-from-prelude.png"), fullPage: false });
+  await page.locator("#story-next").click();
+  await page.waitForTimeout(700);
+  const secondPage = await page.locator("#story-text").innerHTML();
+  if (!secondPage.includes('<i class="plain-italic">talvez</i>') || !secondPage.includes("<em>apaixonado</em>")) throw new Error(`Marcações da página não aplicadas: ${secondPage}`);
+  await page.screenshot({ path: path.join(artifacts, "06c-story-page.png"), fullPage: false });
+  await page.locator("#story-next").click();
+  await page.waitForTimeout(700);
+  if ((await page.locator("#story-subtext").innerText()) !== "Pessoa B ♥ Pessoa A" || await page.locator("#story-eyebrow").isVisible()) throw new Error("O epílogo das páginas precisa seguir sem rótulo dourado.");
+  await page.getByRole("button", { name: "Abrir a carta de Pessoa A", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Fechar experiência", exact: true }).click();
+  if (await page.locator("[data-open-pages]").first().isVisible()) throw new Error("A pessoa amada não escreve as páginas.");
+  await page.locator("#radio-toggle").click();
+  if (await page.locator("#radio-add").isVisible()) throw new Error("A pessoa amada não adiciona músicas.");
+  await page.locator("[data-close-radio]").click();
   await page.getByText("Pessoa B & Pessoa A", { exact: true }).first().waitFor();
   if ((await page.locator("#letter-eyebrow").innerText()).toUpperCase() !== "UMA CARTA DE PESSOA A") throw new Error("A carta recebida não aparece na perspectiva da pessoa amada.");
   await page.getByRole("button", { name: "Abrir o envelope", exact: true }).click();
@@ -163,22 +253,6 @@ try {
   await page.getByRole("button", { name: "Fechar carta", exact: true }).click();
   const letterAuthors = await page.evaluate(() => JSON.parse(localStorage.getItem("lamour-vrai-data-v2")).letters.map(letter => letter.author).sort().join(","));
   if (letterAuthors !== "owner,partner") throw new Error(`As duas cartas precisam coexistir: ${letterAuthors}`);
-
-  await page.locator("[data-open-story]").first().click();
-  await page.locator("#story-dialog[open]").waitFor();
-  const storyTitles = [];
-  for (let step = 0; step < 12; step += 1) {
-    await page.waitForTimeout(600);
-    storyTitles.push(await page.locator("#story-eyebrow").innerText());
-    const next = page.locator("#story-next");
-    if ((await next.innerText()).startsWith("Voltar")) break;
-    await next.click();
-  }
-  const epilogue = await page.locator("#story-subtext").innerText();
-  if (!storyTitles.some(title => /A primeira página/i.test(title)) || epilogue !== "Pessoa B ♥ Pessoa A") throw new Error(`Retrospectiva incompleta: ${storyTitles.join(" | ")} / ${epilogue}`);
-  await page.getByRole("button", { name: "Abrir a carta de Pessoa A", exact: true }).waitFor();
-  await page.screenshot({ path: path.join(artifacts, "05-retrospective.png"), fullPage: false });
-  await page.getByRole("button", { name: "Fechar experiência", exact: true }).click();
 
   const nativeInstallAvailable = await page.locator("html").evaluate(element => element.classList.contains("can-install"));
   if (!nativeInstallAvailable) {
@@ -230,7 +304,7 @@ try {
   await mobilePage.screenshot({ path: path.join(artifacts, "03-mobile.png"), fullPage: false });
   await mobileContext.close();
 
-  process.stdout.write("Fluxo validado: manifest, modo offline, acesso sem capa, memória com foto reduzida, sonho, carta, cápsula, bloqueio, escolha de quem entra, prelúdio, perspectiva da pessoa amada com as duas cartas, retrospectiva, restauração de backup e layout móvel.\n");
+  process.stdout.write("Fluxo validado: manifest, modo offline, acesso sem capa, memória com foto reduzida, sonho, carta, cápsula, retrospectiva automática, páginas escritas, rádio, bloqueio, escolha de quem entra, prelúdio, música e retrospectiva logo depois dele, perspectiva da pessoa amada com as duas cartas, restauração de backup e layout móvel.\n");
 } finally {
   await browser.close();
 }

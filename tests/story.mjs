@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 const { createViewer, profileToForm, formToProfile, relationshipDay, anniversaryInfo, toRoman } = await import("../src/core/perspective.js");
 const { normalizeProfile, fixShortYear } = await import("../src/data/defaults.js");
 const { buildRetrospective } = await import("../src/features/story/retrospective.js");
+const { formatEmphasis } = await import("../src/core/formatters.js");
 
 const profile = normalizeProfile({
   partnerOne: "Pessoa A",
@@ -109,4 +110,40 @@ assert.equal(empty.at(-1).quote, "E eu escolheria tudo outra vez.");
 const single = buildRetrospective({ state: { ...state, memories: [state.memories[1]], dreams: [], capsules: [] }, profile, viewer: owner, today: new Date(2026, 9, 18) });
 assert.deepEqual(single.map(chapter => chapter.key), ["prologue", "first", "epilogue"], "Capítulos sem dados suficientes são pulados.");
 
-process.stdout.write("História validada: perspectiva dos dois, edição do perfil sem trocas, aniversário, capítulos montados com dados reais, capítulos vazios pulados e prelúdio de cada autor.\n");
+// ---------- Páginas escritas e rádio ----------
+const asset = { path: "casal/p1.bin", iv: "abcdefghijklmnop", mime: "image/webp" };
+const withPages = normalizeProfile({
+  ...profile,
+  pages: [
+    { id: "p2", date: "2025-10-07", title: "O momento em que _talvez_ eu tenha me *apaixonado* por ti.", text: "Texto menor." },
+    { id: "p1", date: "0025-10-04", title: "Tudo começou.", text: "", photo: asset },
+    { id: "p3", date: "sem data", title: "Ignorada" },
+    { id: "p4", date: "2025-10-22", title: "", text: "Sem frase também é ignorada" },
+    { id: "p5", date: "2025-10-22", title: "Imagem estranha some", photo: { path: "../fora.bin", iv: "abcdefghijklmnop", mime: "image/webp" } }
+  ],
+  songs: [
+    { id: "s1", title: "Uma música", artist: "Artista", audio: { local: true, mime: "audio/mpeg" } },
+    { id: "s2", title: "Arquivo que não é áudio", audio: { local: true, mime: "text/html" } }
+  ]
+});
+assert.deepEqual(withPages.pages.map(page => page.id), ["p1", "p2", "p5"], "Páginas válidas, em ordem de data e com o ano corrigido.");
+assert.equal(withPages.pages[0].date, "2025-10-04");
+assert.deepEqual(withPages.pages[0].photo, asset);
+assert.equal(withPages.pages[2].photo, null, "Referência de imagem fora do cofre é descartada.");
+assert.deepEqual(withPages.songs.map(song => song.id), ["s1"], "Só arquivos de áudio entram na rádio.");
+assert.deepEqual(normalizeProfile({ ...withPages, ...formToProfile(profileToForm(withPages, owner), owner) }).pages, withPages.pages, "Editar o perfil não apaga as páginas.");
+
+const written = buildRetrospective({ state, profile: withPages, viewer: partner, hasLetterForViewer: true, today: new Date(2026, 9, 31) });
+assert.deepEqual(written.map(chapter => chapter.key), ["p1", "p2", "p5", "epilogue"], "Com páginas escritas, a retrospectiva é contada por elas.");
+assert.equal(written[0].eyebrow, "04 de outubro de 2025", "No lugar do rótulo dourado, a data da página.");
+assert.deepEqual(written[0].photoAsset, asset);
+assert.equal(written[1].text, "Texto menor.");
+assert.equal(written.at(-1).eyebrow, "");
+assert.equal(written.at(-1).action.label, "Abrir a carta de Pessoa A");
+assert.equal(
+  formatEmphasis(written[1].title),
+  'O momento em que <i class="plain-italic">talvez</i> eu tenha me <em>apaixonado</em> por ti.'
+);
+assert.equal(formatEmphasis("<b>*oi*</b>"), "&lt;b&gt;<em>oi</em>&lt;/b&gt;", "As marcações não abrem espaço para HTML.");
+
+process.stdout.write("História validada: perspectiva dos dois, edição do perfil sem trocas, aniversário, capítulos montados com dados reais, capítulos vazios pulados, prelúdio de cada autor, páginas escritas com data e imagem, e rádio só com áudio.\n");

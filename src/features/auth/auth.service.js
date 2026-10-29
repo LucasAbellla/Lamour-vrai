@@ -1,5 +1,6 @@
 import { normalizeProfile } from "../../data/defaults.js";
 import { normalizeRole } from "../../core/perspective.js";
+import { createLocalMedia } from "../../core/media.js";
 
 const encoder = new TextEncoder();
 
@@ -32,6 +33,7 @@ export function createAuthService(namespace) {
   const accountKey = `${namespace}-local-account-v1`;
   const sessionKey = `${namespace}-session-v1`;
   const roleKey = `${namespace}-viewer-v1`;
+  const localMedia = createLocalMedia(namespace);
   let unlockedProfile = null;
 
   function readAccount() {
@@ -48,6 +50,8 @@ export function createAuthService(namespace) {
     isUnlocked: () => Boolean(unlockedProfile),
     getProfile: () => unlockedProfile ? structuredClone(unlockedProfile) : null,
     getStoreOptions: () => ({}),
+    // No modo local, fotos das páginas e músicas ficam no IndexedDB deste aparelho, sem cifra.
+    getMedia: () => localMedia,
     // No modo local (um aparelho só) a pessoa escolhe na entrada quem está abrindo o espaço.
     canChooseRole: true,
     getRole: () => normalizeRole(sessionStorage.getItem(roleKey)),
