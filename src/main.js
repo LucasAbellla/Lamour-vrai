@@ -6,7 +6,7 @@ import "./styles/structural.css";
 import { assertEnvironment, environment } from "./config/environment.js";
 import { createStore } from "./core/store.js";
 import { applyProfile, startRelationshipClock } from "./core/profile.js";
-import { createViewer } from "./core/perspective.js";
+import { createViewer, preludeFor } from "./core/perspective.js";
 import { createAuthService } from "./features/auth/auth.service.js";
 import { createSecureAuthService } from "./features/auth/secure-auth.service.js";
 import { setupAuthUI } from "./features/auth/auth.ui.js";
@@ -15,7 +15,6 @@ import { createCapsulesFeature } from "./features/capsules/capsules.js";
 import { createDreamsFeature } from "./features/dreams/dreams.js";
 import { createLettersFeature } from "./features/letters/letters.js";
 import { createStoryFeature } from "./features/story/story.js";
-import { createOpening } from "./features/opening/opening.js";
 import { createPrelude } from "./features/prelude/prelude.js";
 import { createPreludeEditor } from "./features/prelude/prelude-editor.js";
 import { createExperience } from "./features/experience.js";
@@ -113,21 +112,10 @@ async function initializePrivateSpace(profile, { resumed = false } = {}) {
   setupRevealAndNavigation();
   document.documentElement.dataset.environment = environment.name;
 
-  // A capa aparece a cada vez que o cofre é aberto; recarregar a página no meio da visita não a repete.
-  if (!resumed) {
-    createOpening({
-      auth,
-      getProfile,
-      getViewer,
-      onRoleChosen(role) {
-        auth.setRole(role);
-        refreshViewer();
-        renderAll();
-      },
-      openStory: () => story.open(),
-      prelude
-    }).show();
-  }
+  // Ao abrir o cofre, o espaço aparece direto. Se houver prelúdio para quem entra, a tela fica escura
+  // e ele toca antes; recarregar a página no meio da visita não o repete.
+  const opening = resumed ? null : preludeFor(currentProfile, currentViewer);
+  if (opening) void prelude.play(opening, { instant: true });
 }
 
 feedback.setupDialogs();

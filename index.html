@@ -76,7 +76,7 @@
           <label class="field"><span>Seu nome</span><input name="partnerOne" maxlength="40" autocomplete="off" required></label>
           <label class="field"><span>Nome de quem você ama</span><input name="partnerTwo" maxlength="40" autocomplete="off" required></label>
           <label class="field"><span>Como você chama essa pessoa?</span><input name="nickname" maxlength="60" placeholder="Ex.: meu amor"></label>
-          <label class="field"><span>Quando tudo começou?</span><input name="relationshipStart" type="date" required></label>
+          <label class="field"><span>Quando tudo começou?</span><input name="relationshipStart" type="date" min="1900-01-01" required></label>
           <label class="field full"><span>Uma frase que representa vocês</span><textarea name="dedication" rows="3" maxlength="180" placeholder="Essa frase vai receber vocês sempre que entrarem."></textarea></label>
           <label class="field full"><span>Frase do cofre</span><input name="passphrase" type="password" minlength="4" autocomplete="new-password" required placeholder="Algo que apenas vocês conhecem"></label>
           <p class="form-error full" id="setup-error" role="alert"></p>
@@ -99,6 +99,12 @@
           <p class="form-error full" id="unlock-error" role="alert"></p>
           <button class="button primary full" type="submit">Entrar no L'amour vrai</button>
         </form>
+      </article>
+      <article class="access-card" id="role-panel" hidden>
+        <p class="eyebrow">NESTE APARELHO</p>
+        <h2>Quem está <em>entrando?</em></h2>
+        <p>O espaço se ajusta ao olhar de quem abre: as cartas, os nomes e o prelúdio.</p>
+        <div class="access-form" id="role-actions"></div>
       </article>
     </div>
   </section>
@@ -327,7 +333,7 @@
       <p class="modal-intro">Não precisa ser um grande acontecimento. Os momentos simples também formam uma história.</p>
       <div class="form-grid">
         <label class="field full"><span>Título</span><input name="title" maxlength="70" required placeholder="Ex.: Nosso café de domingo"></label>
-        <label class="field"><span>Data</span><input name="date" type="date" required></label>
+        <label class="field"><span>Data</span><input name="date" type="date" min="1900-01-01" required></label>
         <label class="field"><span>Tipo de memória</span><select name="category"><option value="cotidiano">Cotidiano</option><option value="encontro">Encontro</option><option value="distancia">Distância</option><option value="viagem">Viagem</option><option value="especial">Data especial</option></select></label>
         <label class="field full"><span>Algumas palavras</span><textarea name="description" rows="4" maxlength="300" required placeholder="O que tornou esse momento especial?"></textarea></label>
         <label class="photo-field full"><input name="photo" type="file" accept="image/*"><span class="photo-icon">＋</span><strong>Adicionar uma fotografia</strong><small>Opcional · ajustamos o tamanho e removemos a localização automaticamente</small></label>
@@ -388,7 +394,7 @@
         <label class="field"><span>Seu nome</span><input name="selfName" maxlength="40" required></label>
         <label class="field"><span>Nome de quem você ama</span><input name="belovedName" maxlength="40" required></label>
         <label class="field"><span>Como você chama essa pessoa?</span><input name="nickname" maxlength="60"></label>
-        <label class="field"><span>Início do relacionamento</span><input name="relationshipStart" type="date" required></label>
+        <label class="field"><span>Início do relacionamento</span><input name="relationshipStart" type="date" min="1900-01-01" required></label>
         <label class="field full"><span>Frase de vocês</span><textarea name="dedication" rows="3" maxlength="180"></textarea></label>
       </div>
       <p class="form-error" id="profile-form-error" role="alert"></p>
@@ -472,7 +478,7 @@
         <button type="button" data-command="capsule"><span>◇</span><div><strong>Criar cápsula do tempo</strong><small>Guardar uma mensagem para o futuro</small></div><kbd>C</kbd></button>
         <button type="button" data-command="constellation"><span>⁙</span><div><strong>Abrir nossa constelação</strong><small>Ver as estrelas formadas pelas memórias</small></div><kbd>E</kbd></button>
         <button type="button" data-command="story"><span>∞</span><div><strong>Revisitar o primeiro ano</strong><small>Abrir a experiência comemorativa</small></div><kbd>1</kbd></button>
-        <button type="button" data-command="prelude"><span>✦</span><div><strong>Escrever o prelúdio</strong><small>As frases que aparecem antes da capa do livro</small></div><kbd>R</kbd></button>
+        <button type="button" data-command="prelude"><span>✦</span><div><strong>Escrever o prelúdio</strong><small>As frases que aparecem ao abrir o app</small></div><kbd>R</kbd></button>
         <button type="button" data-command="profile"><span>♡</span><div><strong>Detalhes do casal</strong><small>Nomes, data e frase particular</small></div><kbd>P</kbd></button>
         <button type="button" data-command="install"><span>⇩</span><div><strong>Instalar no celular</strong><small>Ver o passo a passo para Android e iPhone</small></div><kbd>I</kbd></button>
         <button type="button" data-command="lock"><span>⌁</span><div><strong>Bloquear nosso espaço</strong><small>Esconder os dados particulares neste aparelho</small></div><kbd>L</kbd></button>
@@ -499,29 +505,13 @@
     </div>
   </dialog>
 
-  <section class="book-opening" id="book-opening" hidden aria-label="Capa do nosso livro">
-    <div class="book" id="book">
-      <div class="book-pages" aria-hidden="true"></div>
-      <div class="book-cover">
-        <span class="book-ornament" aria-hidden="true">✦</span>
-        <p class="book-title">L'amour vrai</p>
-        <p class="book-volume" id="book-volume">Volume I</p>
-        <p class="book-names" id="book-names"></p>
-        <p class="book-chapter" id="book-chapter"></p>
-        <p class="book-dedication" id="book-dedication"></p>
-        <p class="book-greeting" id="book-greeting"></p>
-        <div class="book-actions" id="book-actions"></div>
-      </div>
-    </div>
-  </section>
-
   <section class="prelude" id="prelude" hidden aria-label="Prelúdio" aria-describedby="prelude-lines">
     <canvas class="prelude-sky" id="prelude-sky" aria-hidden="true"></canvas>
     <h2 class="sr-only" id="prelude-name"></h2>
     <div class="prelude-content">
       <div class="prelude-lines" id="prelude-lines" aria-live="polite"></div>
       <p class="prelude-signature" id="prelude-signature"></p>
-      <button class="button secondary" type="button" id="prelude-continue" hidden>Abrir o livro →</button>
+      <button class="button secondary" type="button" id="prelude-continue" hidden>Entrar →</button>
     </div>
     <button class="prelude-skip" type="button" id="prelude-skip">Pular</button>
   </section>
@@ -529,9 +519,9 @@
   <dialog class="modal" id="prelude-dialog" aria-labelledby="prelude-editor-title">
     <form class="modal-shell" id="prelude-form">
       <button class="modal-close" type="button" data-close-prelude aria-label="Fechar">×</button>
-      <p class="eyebrow">ANTES DA CAPA</p>
+      <p class="eyebrow">AO ABRIR O COFRE</p>
       <h2 id="prelude-editor-title">O prelúdio</h2>
-      <p class="modal-intro" id="prelude-intro">Aparece ao abrir o app, antes da capa do livro.</p>
+      <p class="modal-intro" id="prelude-intro">Aparece ao abrir o app, com a tela escura.</p>
       <label class="field full"><span>Suas frases · uma por linha, até quatro</span><textarea name="lines" rows="5" maxlength="520" placeholder="Uma frase por linha"></textarea></label>
       <p class="prelude-counter" id="prelude-counter"></p>
       <label class="field full"><span>Assinatura</span><input name="signature" maxlength="40"></label>

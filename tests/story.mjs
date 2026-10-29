@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 
 const { createViewer, profileToForm, formToProfile, relationshipDay, anniversaryInfo, toRoman } = await import("../src/core/perspective.js");
-const { normalizeProfile } = await import("../src/data/defaults.js");
+const { normalizeProfile, fixShortYear } = await import("../src/data/defaults.js");
 const { buildRetrospective } = await import("../src/features/story/retrospective.js");
 
 const profile = normalizeProfile({
@@ -57,6 +57,8 @@ assert.equal(relationshipDay(profile, new Date(2026, 9, 18, 8)), 353);
 assert.deepEqual(anniversaryInfo(profile, new Date(2026, 9, 18)), { isAnniversary: false, completedYears: 0, volume: 1 });
 assert.deepEqual(anniversaryInfo(profile, new Date(2026, 9, 31, 9)), { isAnniversary: true, completedYears: 1, volume: 2 });
 assert.deepEqual(anniversaryInfo(profile, new Date(2026, 10, 1)), { isAnniversary: false, completedYears: 1, volume: 2 });
+assert.equal(normalizeProfile({ relationshipStart: "0025-10-31" }).relationshipStart, "2025-10-31", "Ano digitado com dois dígitos volta a ser deste século.");
+assert.equal(fixShortYear("2024-02-14"), "2024-02-14");
 assert.equal(toRoman(4), "IV");
 assert.equal(toRoman(14), "XIV");
 
