@@ -20,9 +20,9 @@ with checks as (
          (select bool_and(relrowsecurity and relforcerowsecurity)
             from pg_class where oid in ('public.couples'::regclass, 'public.couple_members'::regclass, 'public.vault_config'::regclass, 'public.vault_items'::regclass))
   union all
-  select 5, 'Políticas restritivas exigem 2FA (aal2)',
-         (select count(*)::text from pg_policies where permissive = 'RESTRICTIVE' and qual like '%current_aal2%'),
-         (select count(*) >= 5 from pg_policies where permissive = 'RESTRICTIVE' and qual like '%current_aal2%')
+  select 5, 'Só membros do casal passam, sem exigir autenticador',
+         (select count(*) filter (where qual like '%is_member%')::text || ' de membro, ' || count(*) filter (where qual like '%current_aal2%')::text || ' de autenticador' from pg_policies),
+         (select count(*) filter (where qual like '%is_member%') >= 5 and count(*) filter (where qual like '%current_aal2%') = 0 from pg_policies)
   union all
   select 6, 'Bucket de fotos é privado e só aceita arquivos cifrados',
          (select coalesce(public::text || ' / ' || array_to_string(allowed_mime_types, ','), 'ausente') from storage.buckets where id = 'memory-media'),

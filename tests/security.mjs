@@ -33,21 +33,25 @@ const encryptedPhoto = await encryptBytes(reopenedKey, photoBytes, "test:photo")
 assert.deepEqual(await decryptBytes(reopenedKey, encryptedPhoto, "test:photo"), photoBytes);
 
 const migration = fs.readFileSync(new URL("../supabase/migrations/20261005190000_secure_couple_vault.sql", import.meta.url), "utf8");
+const withoutTotp = fs.readFileSync(new URL("../supabase/migrations/20261030120000_remove_totp_requirement.sql", import.meta.url), "utf8");
 const configToml = fs.readFileSync(new URL("../supabase/config.toml", import.meta.url), "utf8");
 const productionEnv = fs.readFileSync(new URL("../.env.production", import.meta.url), "utf8");
 
 for (const required of [
   "force row level security",
   "enforce_two_members",
-  "current_aal2",
   "activate_only_allowed_users",
   "public = false",
   "revoke all on public.couples"
 ]) assert.ok(migration.toLowerCase().includes(required), `Proteção ausente na migração: ${required}`);
+
+const totpRules = [...migration.matchAll(/create policy (\w+_mfa_required)/g)].map(match => match[1]);
+assert.equal(totpRules.length, 5);
+for (const rule of totpRules) assert.ok(withoutTotp.includes(`drop policy if exists ${rule}`), `Regra do autenticador esquecida: ${rule}`);
 
 assert.match(configToml, /enable_signup\s*=\s*false/g);
 assert.match(productionEnv, /VITE_AUTH_MODE=supabase/);
 assert.match(productionEnv, /VITE_DATA_MODE=supabase/);
 assert.equal(/service[_-]?role/i.test(productionEnv), false, "Segredo administrativo não pode existir no cliente.");
 
-process.stdout.write("Segurança validada: AES-GCM, frase incorreta, contexto autenticado, fotos cifradas, RLS, AAL2, duas contas e produção segura.\n");
+process.stdout.write("Segurança validada: AES-GCM, frase incorreta, contexto autenticado, fotos cifradas, RLS, duas contas e produção segura.\n");

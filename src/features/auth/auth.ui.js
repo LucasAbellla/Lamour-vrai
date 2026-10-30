@@ -4,8 +4,6 @@ export function setupAuthUI({ auth, onAuthenticated }) {
   const gate = document.querySelector("#access-gate");
   const panels = {
     signin: document.querySelector("#signin-panel"),
-    "mfa-enroll": document.querySelector("#mfa-enroll-panel"),
-    "mfa-challenge": document.querySelector("#mfa-challenge-panel"),
     setup: document.querySelector("#setup-panel"),
     waiting: document.querySelector("#waiting-panel"),
     unlock: document.querySelector("#unlock-panel"),
@@ -121,13 +119,6 @@ export function setupAuthUI({ auth, onAuthenticated }) {
   async function advanceSecureAccess(initialState) {
     const state = initialState || await auth.securityState();
     if (state.stage === "signin") return setMode("signin");
-    if (state.stage === "mfa-enroll") {
-      const enrollment = await auth.startEnrollment();
-      document.querySelector("#mfa-qr").src = enrollment.qrCode;
-      document.querySelector("#mfa-secret").textContent = enrollment.secret;
-      return setMode("mfa-enroll");
-    }
-    if (state.stage === "mfa-challenge") return setMode("mfa-challenge");
     return openVaultGate();
   }
 
@@ -176,26 +167,6 @@ export function setupAuthUI({ auth, onAuthenticated }) {
       } finally {
         submit.disabled = false;
       }
-    });
-
-    ["mfa-enroll", "mfa-challenge"].forEach(mode => {
-      const form = document.querySelector(`#${mode}-form`);
-      const error = document.querySelector(`#${mode}-error`);
-      form.addEventListener("submit", async event => {
-        event.preventDefault();
-        const submit = form.querySelector('[type="submit"]');
-        error.textContent = "";
-        submit.disabled = true;
-        try {
-          await auth.verifyFactor(form.elements.code.value);
-          form.reset();
-          await openVaultGate();
-        } catch (issue) {
-          error.textContent = issue.message;
-        } finally {
-          submit.disabled = false;
-        }
-      });
     });
 
     void auth.initialize()
