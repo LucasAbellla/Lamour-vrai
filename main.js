@@ -1,10 +1,12 @@
-const { app, BrowserWindow, Menu, session, shell } = require("electron");
+const { app, BrowserWindow, Menu, dialog, session, shell } = require("electron");
 const path = require("path");
 
 // O app instalado abre o site publicado: toda correção chega sozinha, e nenhuma chave ou
 // conteúdo particular precisa ir dentro do instalador. O cofre continua cifrado no aparelho.
 const SITE_URL = "https://lamour-vrai.pages.dev/";
 const startUrl = app.isPackaged ? SITE_URL : process.env.ELECTRON_START_URL;
+const UPDATE_INTERVAL_MS = 10 * 60 * 1000;
+const UPDATE_FOCUS_PAUSE_MS = 20 * 1000;
 
 // Usa a placa de vídeo mesmo quando o Chromium desconfia do driver: sem ela, os efeitos travam a tela.
 app.commandLine.appendSwitch("ignore-gpu-blocklist");
@@ -33,7 +35,7 @@ function createWindow() {
     minWidth: 360,
     minHeight: 640,
     show: false,
-    backgroundColor: "#0B0709",
+    backgroundColor: "#0c0506",
     title: "L'amour vrai",
     autoHideMenuBar: true,
     webPreferences: {
@@ -80,6 +82,43 @@ function createWindow() {
   return window;
 }
 
+// O que muda no site chega pela própria página. Já o que muda no app sai como uma versão no
+// GitHub: ele confere ao abrir, ao voltar para a janela e a cada 10 minutos, e baixa sozinho.
+function setupUpdates() {
+  const { autoUpdater } = require("electron-updater");
+  let lastCheck = 0;
+  let announced = null;
+
+  const check = () => {
+    lastCheck = Date.now();
+    autoUpdater.checkForUpdates().catch(() => {});
+  };
+
+  // Sem internet a busca falha, e a próxima tentativa resolve.
+  autoUpdater.on("error", () => {});
+  autoUpdater.on("update-downloaded", async ({ version }) => {
+    if (announced === version) return;
+    announced = version;
+    const { response } = await dialog.showMessageBox(mainWindow, {
+      type: "info",
+      title: "L'amour vrai",
+      message: "Nova versão do L'amour vrai",
+      detail: "Está tudo pronto. O app fecha e volta sozinho em alguns segundos.",
+      buttons: ["Atualizar agora", "Depois"],
+      defaultId: 0,
+      cancelId: 1,
+      noLink: true
+    });
+    if (response === 0) autoUpdater.quitAndInstall(true, true);
+  });
+
+  app.on("browser-window-focus", () => {
+    if (Date.now() - lastCheck >= UPDATE_FOCUS_PAUSE_MS) check();
+  });
+  setInterval(check, UPDATE_INTERVAL_MS);
+  check();
+}
+
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
@@ -95,6 +134,7 @@ if (!app.requestSingleInstanceLock()) {
     app.on("activate", () => {
       if (BrowserWindow.getAllWindows().length === 0) mainWindow = createWindow();
     });
+    if (app.isPackaged) setupUpdates();
   });
 
   app.on("window-all-closed", () => {

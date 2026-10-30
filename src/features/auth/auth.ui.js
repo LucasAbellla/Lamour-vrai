@@ -96,13 +96,7 @@ export function setupAuthUI({ auth, onAuthenticated }) {
   async function openVaultGate() {
     const hasAccount = await auth.hasAccount();
     const isPartner = auth.mode === "secure" && auth.getRole() === "partner";
-    if (hasAccount) {
-      if (isPartner) {
-        document.querySelector("#unlock-eyebrow").textContent = "TUDO JÁ ESTÁ PRONTO";
-        document.querySelector("#unlock-description").textContent = "As memórias, as cartas e os sonhos já estão guardados para você. Falta só a frase que vocês combinaram — ela nunca sai deste aparelho.";
-      }
-      return setMode("unlock");
-    }
+    if (hasAccount) return setMode("unlock");
     setMode(isPartner ? "waiting" : "setup");
   }
 
@@ -126,7 +120,6 @@ export function setupAuthUI({ auth, onAuthenticated }) {
     setupForm.elements.passphrase.minLength = 14;
     document.querySelector("#setup-description").textContent = "A pessoa responsável prepara o cofre uma única vez. Todo o conteúdo será cifrado antes de sair deste aparelho.";
     document.querySelector("#setup-note").innerHTML = "<span>◇</span> A frase do cofre precisa ter 14 caracteres ou mais e deve ser compartilhada pessoalmente. Ela não pode ser recuperada pelo servidor.";
-    document.querySelector("#unlock-description").textContent = "Digite a frase compartilhada por vocês. Ela nunca é enviada ao servidor e será esquecida ao bloquear o espaço.";
 
     const signinForm = document.querySelector("#signin-form");
     signinForm.addEventListener("submit", async event => {
@@ -140,14 +133,15 @@ export function setupAuthUI({ auth, onAuthenticated }) {
       submit.textContent = "Enviando…";
       try {
         await auth.requestAccessLink(signinForm.elements.email.value);
-        success.textContent = "Se este for um dos dois e-mails autorizados, o e-mail chegou com um link e um código. Abra o link neste mesmo aparelho ou digite o código abaixo — no app instalado no celular, use o código.";
+        success.textContent = "Se este e-mail tiver acesso, o código já chegou.";
         codeForm.hidden = false;
+        submit.classList.replace("primary", "secondary");
         setTimeout(() => codeForm.elements.code.focus(), 120);
       } catch (issue) {
         error.textContent = issue.message;
       } finally {
         submit.disabled = false;
-        submit.textContent = "Enviar link seguro";
+        submit.textContent = codeForm.hidden ? "Enviar código" : "Enviar de novo";
       }
     });
 

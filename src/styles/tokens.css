@@ -1,29 +1,29 @@
 :root {
-  --color-ink-950: #080406;
-  --color-ink-900: #0e070a;
-  --color-ink-800: #170b11;
-  --color-wine-700: #401522;
-  --color-wine-600: #5c1a2e;
-  --color-lily-500: #d7475f;
-  --color-lily-400: #e46a82;
-  --color-rose-300: #e39aab;
-  --color-blush-200: #f4c4cf;
-  --color-cream-100: #f7eef0;
+  --color-ink-950: #080304;
+  --color-ink-900: #0e0506;
+  --color-ink-800: #180809;
+  --color-wine-700: #470e13;
+  --color-wine-600: #661116;
+  --color-lily-500: #e0202c;
+  --color-lily-400: #ec5054;
+  --color-rose-300: #ee8c86;
+  --color-blush-200: #f8c4bc;
+  --color-cream-100: #f8eeec;
   --color-gold-300: #dcbf91;
   --color-gold-200: #efdcb8;
 
   --surface-page: var(--color-ink-950);
-  --surface-panel: rgba(30, 13, 20, .86);
-  --surface-raised: rgba(45, 20, 30, .94);
-  --surface-glass: rgba(14, 7, 10, .62);
+  --surface-panel: rgba(32, 10, 13, .86);
+  --surface-raised: rgba(48, 14, 18, .94);
+  --surface-glass: rgba(15, 6, 7, .62);
   --text-primary: var(--color-cream-100);
-  --text-secondary: rgba(247, 238, 240, .7);
-  --text-tertiary: rgba(247, 238, 240, .44);
+  --text-secondary: rgba(248, 238, 236, .7);
+  --text-tertiary: rgba(248, 238, 236, .44);
   --accent-primary: var(--color-lily-500);
   --accent-soft: var(--color-rose-300);
   --accent-gold: var(--color-gold-300);
-  --border-subtle: rgba(247, 238, 240, .09);
-  --border-emphasis: rgba(227, 154, 171, .3);
+  --border-subtle: rgba(248, 238, 236, .09);
+  --border-emphasis: rgba(238, 140, 134, .3);
 
   /* Tipografia */
   --font-display: "Cormorant Garamond", "Cormorant", Georgia, "Times New Roman", serif;
@@ -33,14 +33,14 @@
   --tracking-eyebrow: .3em;
 
   /* Gradientes */
-  --gradient-ink: linear-gradient(118deg, var(--color-blush-200) 0%, var(--color-lily-400) 42%, #c13a57 68%, var(--color-gold-300) 100%);
+  --gradient-ink: linear-gradient(118deg, var(--color-blush-200) 0%, var(--color-lily-400) 42%, #c81e26 68%, var(--color-gold-300) 100%);
   --gradient-gold: linear-gradient(100deg, var(--color-gold-200), var(--color-gold-300) 45%, #b8935e);
-  --gradient-button: linear-gradient(135deg, #e5607b 0%, #bd3554 48%, #7c1d35 100%);
-  --gradient-card: linear-gradient(160deg, rgba(52, 22, 33, .92) 0%, rgba(24, 10, 16, .95) 55%, rgba(13, 6, 9, .98) 100%);
-  --gradient-panel: linear-gradient(150deg, rgba(247, 238, 240, .06), rgba(247, 238, 240, .015));
-  --gradient-border: linear-gradient(145deg, rgba(244, 196, 207, .42), rgba(244, 196, 207, .06) 38%, rgba(247, 238, 240, .04) 62%, rgba(220, 191, 145, .32));
+  --gradient-button: linear-gradient(135deg, #ee3b3f 0%, #c11a22 48%, #7e1017 100%);
+  --gradient-card: linear-gradient(160deg, rgba(54, 14, 18, .92) 0%, rgba(26, 8, 10, .95) 55%, rgba(13, 6, 9, .98) 100%);
+  --gradient-panel: linear-gradient(150deg, rgba(248, 238, 236, .06), rgba(248, 238, 236, .015));
+  --gradient-border: linear-gradient(145deg, rgba(248, 196, 188, .42), rgba(248, 196, 188, .06) 38%, rgba(248, 238, 236, .04) 62%, rgba(220, 191, 145, .32));
   --gradient-hairline: linear-gradient(90deg, transparent, rgba(220, 191, 145, .45), transparent);
-  --gradient-aurora: radial-gradient(ellipse 60% 50% at 78% 0%, rgba(215, 71, 95, .2), transparent 70%), radial-gradient(ellipse 50% 40% at 6% 38%, rgba(124, 29, 53, .22), transparent 70%), radial-gradient(ellipse 45% 35% at 90% 72%, rgba(220, 191, 145, .07), transparent 70%), radial-gradient(ellipse 55% 45% at 22% 100%, rgba(92, 26, 46, .26), transparent 70%);
+  --gradient-aurora: radial-gradient(ellipse 60% 50% at 78% 0%, rgba(224, 32, 44, .2), transparent 70%), radial-gradient(ellipse 50% 40% at 6% 38%, rgba(130, 16, 24, .22), transparent 70%), radial-gradient(ellipse 45% 35% at 90% 72%, rgba(220, 191, 145, .07), transparent 70%), radial-gradient(ellipse 55% 45% at 22% 100%, rgba(96, 14, 20, .26), transparent 70%);
 
   --radius-sm: 10px;
   --radius-control: 12px;
@@ -49,9 +49,9 @@
   --radius-modal: 32px;
 
   --shadow-soft: 0 18px 55px rgba(0, 0, 0, .24);
-  --shadow-panel: 0 30px 90px rgba(0, 0, 0, .4), 0 0 0 1px rgba(244, 196, 207, .04);
+  --shadow-panel: 0 30px 90px rgba(0, 0, 0, .4), 0 0 0 1px rgba(248, 196, 188, .04);
   --shadow-modal: 0 40px 120px rgba(0, 0, 0, .6);
-  --glow-lily: 0 0 42px rgba(215, 71, 95, .26);
+  --glow-lily: 0 0 42px rgba(224, 32, 44, .26);
 
   --motion-instant: 120ms;
   --motion-fast: 180ms;

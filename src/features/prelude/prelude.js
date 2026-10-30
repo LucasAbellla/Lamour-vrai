@@ -3,8 +3,8 @@ import { LOVE_PHRASES } from "./love-phrases.js";
 // O prelúdio: "eu te amo" em dezenas de línguas enche a tela, as palavras se desfazem em
 // poeira de luz que forma o nome de quem abre o app (na mesma fonte), as frases escritas
 // pela pessoa amada aparecem palavra por palavra e a assinatura é escrita à mão.
-const COLORS = ["244,196,207", "227,154,171", "220,191,145", "247,238,240"];
-const NAME_FROM = [244, 196, 207];
+const COLORS = ["248,196,188", "238,140,134", "220,191,145", "248,238,236"];
+const NAME_FROM = [248, 196, 188];
 const NAME_TO = [220, 191, 145];
 const SCRIPT_FONT = '"Pinyon Script", "Cormorant Garamond", serif';
 const PHRASES_MS = 5000;
@@ -78,7 +78,7 @@ function layoutPhrases(context, width, height) {
       x: spot.x,
       y: spot.y,
       appearAt: 300 + PHRASES_MS * Math.pow(index / (count - 1), .6),
-      color: index === 0 ? "247,238,240" : COLORS[Math.floor(Math.random() * COLORS.length)],
+      color: index === 0 ? "248,238,236" : COLORS[Math.floor(Math.random() * COLORS.length)],
       alpha: index === 0 ? .95 : .45 + .45 * weight,
       phase: Math.random() * Math.PI * 2
     };
@@ -168,7 +168,7 @@ export function createPrelude() {
         if (phrasePixels[index + 3] > 70) sources.push({ x, y, rgb: [phrasePixels[index], phrasePixels[index + 1], phrasePixels[index + 2]], alpha: phrasePixels[index + 3] / 255 });
       }
     }
-    if (!sources.length) sources.push(...Array.from({ length: 400 }, () => ({ x: Math.random() * width, y: Math.random() * height, rgb: [247, 238, 240], alpha: .5 })));
+    if (!sources.length) sources.push(...Array.from({ length: 400 }, () => ({ x: Math.random() * width, y: Math.random() * height, rgb: [248, 238, 236], alpha: .5 })));
     shuffle(sources);
 
     const total = Math.max(targets.length, Math.min(sources.length, width < 560 ? 2200 : 4200));
@@ -199,8 +199,8 @@ export function createPrelude() {
     });
 
     const nameGradient = context.createLinearGradient(nameLeft, 0, nameLeft + nameWidth, 0);
-    nameGradient.addColorStop(0, "#f4c4cf");
-    nameGradient.addColorStop(.5, "#f7eef0");
+    nameGradient.addColorStop(0, "#f8c4bc");
+    nameGradient.addColorStop(.5, "#f8eeec");
     nameGradient.addColorStop(1, "#dcbf91");
     const ambient = Array.from({ length: Math.round((width * height) / 9000) }, () => ({
       x: Math.random() * width,
@@ -215,7 +215,7 @@ export function createPrelude() {
       const merging = elapsed - mergeAt;
       context.clearRect(0, 0, width, height);
       for (const star of ambient) {
-        context.fillStyle = `rgba(247,238,240,${.12 + .1 * Math.sin(now / 900 + star.phase)})`;
+        context.fillStyle = `rgba(248,238,236,${.12 + .1 * Math.sin(now / 900 + star.phase)})`;
         context.fillRect(star.x, star.y, star.size, star.size);
       }
 
@@ -246,7 +246,7 @@ export function createPrelude() {
         context.globalAlpha = reveal;
         context.font = nameFont;
         context.fillStyle = nameGradient;
-        context.shadowColor = "rgba(227,154,171,.55)";
+        context.shadowColor = "rgba(238,140,134,.55)";
         context.shadowBlur = 24;
         context.fillText(name, width / 2, centerY);
         context.restore();

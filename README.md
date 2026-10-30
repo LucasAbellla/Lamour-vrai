@@ -67,13 +67,20 @@ O site ainda não foi publicado nem instalado. A autenticação, sincronização
 
 ## App para computador
 
-O instalador do Windows abre o site publicado numa janela própria, usando a placa de vídeo. Por isso as correções chegam sozinhas, e nenhuma chave ou conteúdo particular vai dentro dele. Precisa de internet para abrir o cofre.
+O instalador do Windows abre o site publicado numa janela própria, usando a placa de vídeo. Nenhuma chave ou conteúdo particular vai dentro dele, e ele precisa de internet para abrir o cofre.
+
+[Baixar o instalador](https://github.com/LucasAbellla/Lamour-vrai/releases/latest/download/Lamour-vrai-Instalador.exe). Ele não tem assinatura digital, então o Windows avisa na primeira vez: **Mais informações → Executar assim mesmo**.
+
+### Atualizações
+
+- O que muda no site chega pela própria página, cerca de um minuto depois do envio para a `main`. Na tela de entrada o app passa sozinho para a versão nova; com o cofre aberto, ele mostra um aviso.
+- O que muda no próprio app (`main.js`, `desktop/`, ícones ou dependências) aciona o workflow `desktop.yml`, que publica uma versão nova no GitHub. O app confere ao abrir, ao voltar para a janela e a cada 10 minutos, baixa sozinho e pergunta se pode atualizar. Com **Depois**, ela entra quando o app fechar.
+
+Para gerar o instalador em `release/` sem publicar:
 
 ```bash
 npm run desktop:build
 ```
-
-O arquivo sai em `release/Lamour-vrai-Instalador.exe`. Ele não tem assinatura digital, então o Windows avisa na primeira vez: **Mais informações → Executar assim mesmo**.
 
 Para testar a versão local construída pelo Vite, sem instalar:
 

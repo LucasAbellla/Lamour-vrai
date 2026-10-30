@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b0709">
+  <meta name="theme-color" content="#0c0506">
   <meta name="color-scheme" content="dark">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -11,40 +11,28 @@
   <meta name="apple-mobile-web-app-title" content="L'amour vrai">
   <meta name="description" content="L'amour vrai — um arquivo afetivo particular para guardar memórias, cartas e sonhos.">
   <title>L'amour vrai</title>
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="icon" type="image/png" href="./icons/icon-192.png">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 </head>
 <body>
   <section class="access-gate" id="access-gate" aria-label="Acesso ao espaço particular">
-    <div class="access-visual" aria-hidden="true">
-      <img src="/src/assets/red-lily.png" alt="">
-      <div class="access-visual-copy">
-        <p class="eyebrow">UM LUGAR QUE PERTENCE A DOIS</p>
-        <h1>As coisas mais importantes merecem <em>um lugar só delas.</em></h1>
-        <p>Memórias, cartas, sonhos e detalhes guardados com calma — longe do ruído e perto de quem importa.</p>
-      </div>
-    </div>
+    <img class="access-backdrop" src="/src/assets/red-lily.webp" alt="">
     <div class="access-panel">
-      <div class="access-brand"><span class="brand-mark" aria-hidden="true">LV</span><span>L'amour vrai</span></div>
+      <div class="access-brand"><img src="/src/assets/logo.webp" alt=""><span>L'amour vrai</span></div>
       <article class="access-card" id="signin-panel" hidden>
-        <p class="eyebrow">ACESSO SOMENTE POR CONVITE</p>
-        <h2>Um lugar que pertence <em>somente a vocês dois.</em></h2>
-        <p>Use um dos dois e-mails autorizados. Enviaremos um link de uso único e um código. Depois, é só a frase de vocês.</p>
         <form class="access-form" id="signin-form">
-          <label class="field full"><span>E-mail autorizado</span><input name="email" type="email" autocomplete="email" required placeholder="voce@exemplo.com"></label>
+          <label class="field full"><span>E-mail</span><input name="email" type="email" autocomplete="email" required></label>
           <p class="form-error full" id="signin-error" role="alert"></p>
           <p class="form-success full" id="signin-success" role="status"></p>
-          <button class="button primary full" type="submit">Enviar link seguro</button>
+          <button class="button primary full" type="submit">Enviar código</button>
         </form>
         <form class="access-form signin-code-form" id="signin-code-form" hidden>
           <label class="field full"><span>Código do e-mail</span><input name="code" inputmode="numeric" pattern="[0-9]{6,10}" maxlength="10" autocomplete="one-time-code" required></label>
           <p class="form-error full" id="signin-code-error" role="alert"></p>
-          <button class="button secondary full" type="submit">Entrar com o código</button>
+          <button class="button primary full" type="submit">Entrar</button>
         </form>
-        <p class="access-note"><span>◇</span> Novas contas não podem ser criadas por esta tela. Só os dois convites preparados previamente entram.</p>
       </article>
       <article class="access-card" id="setup-panel" hidden>
-        <p class="eyebrow">PRIMEIRO ACESSO</p>
         <h2>Vamos preparar <em>o espaço de vocês.</em></h2>
         <p id="setup-description">Esses dados ficam somente neste dispositivo e só aparecem depois que o espaço é desbloqueado.</p>
         <form class="access-form" id="setup-form">
@@ -60,23 +48,18 @@
         <p class="access-note" id="setup-note"><span>◇</span> Guarde a frase de acesso. No modo local, ela protege a abertura neste aparelho.</p>
       </article>
       <article class="access-card" id="waiting-panel" hidden>
-        <p class="eyebrow">QUASE LÁ</p>
         <h2>Seu lugar está <em>sendo preparado.</em></h2>
         <p>Seu acesso já está confirmado. Falta só a pessoa responsável terminar de arrumar o espaço de vocês — assim que ela abrir o cofre pela primeira vez, você entra direto, sem precisar cadastrar nada.</p>
         <button class="button secondary full" type="button" data-recheck-vault>Verificar de novo</button>
       </article>
       <article class="access-card" id="unlock-panel" hidden>
-        <p class="eyebrow" id="unlock-eyebrow">QUE BOM TER VOCÊ AQUI</p>
-        <h2>Abrir <em>nosso espaço.</em></h2>
-        <p id="unlock-description">As informações particulares só serão carregadas depois da frase do cofre.</p>
         <form class="access-form" id="unlock-form">
           <label class="field full"><span>Frase do cofre</span><input name="passphrase" type="password" autocomplete="current-password" required autofocus></label>
           <p class="form-error full" id="unlock-error" role="alert"></p>
-          <button class="button primary full" type="submit">Entrar no L'amour vrai</button>
+          <button class="button primary full" type="submit">Entrar</button>
         </form>
       </article>
       <article class="access-card" id="role-panel" hidden>
-        <p class="eyebrow">NESTE APARELHO</p>
         <h2>Quem está <em>entrando?</em></h2>
         <p>O espaço se ajusta ao olhar de quem abre: as cartas, os nomes e o prelúdio.</p>
         <div class="access-form" id="role-actions"></div>
@@ -90,7 +73,7 @@
   <div class="app-shell" id="app-shell">
     <header class="topbar">
       <a class="brand" href="#inicio" aria-label="L'amour vrai — ir para o início">
-        <span class="brand-mark" aria-hidden="true">LV</span>
+        <span class="brand-mark" aria-hidden="true"><img src="/src/assets/logo.webp" alt=""></span>
         <span><strong>L'amour vrai</strong><small data-profile="couple-name">Nosso espaço</small></span>
       </a>
       <div class="topbar-actions">
@@ -100,7 +83,7 @@
 
     <main>
       <section class="hero reveal" id="inicio" aria-labelledby="hero-title">
-        <img src="/src/assets/red-lily.png" alt="Lírio vermelho iluminado em um céu escuro e estrelado">
+        <img src="/src/assets/red-lily.webp" alt="Lírios vermelhos iluminados na escuridão">
         <div class="hero-shade"></div>
         <div class="hero-grain" aria-hidden="true"></div>
         <div class="hero-orbit" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -275,7 +258,7 @@
     </main>
 
     <footer>
-      <div><span class="brand-mark" aria-hidden="true">LV</span><p><strong>L'amour vrai</strong><small>Um lugar particular de <span data-profile="couple-name">duas pessoas</span>.</small></p></div>
+      <div><span class="brand-mark" aria-hidden="true"><img src="/src/assets/logo.webp" alt=""></span><p><strong>L'amour vrai</strong><small>Um lugar particular de <span data-profile="couple-name">duas pessoas</span>.</small></p></div>
       <div class="backup-actions">
         <button type="button" id="install-app-footer" data-install-app>Instalar no celular</button>
         <button type="button" id="export-data">Exportar backup</button>

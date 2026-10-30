@@ -202,7 +202,7 @@ try {
   await page.getByRole("button", { name: /Bloquear nosso espaço/ }).click();
   await page.locator("#unlock-panel").waitFor({ state: "visible" });
   await page.locator('#unlock-form [name="passphrase"]').fill("teste-local");
-  await page.getByRole("button", { name: "Entrar no L'amour vrai", exact: true }).click();
+  await page.locator('#unlock-form [type="submit"]').click();
   await page.locator("#role-panel").waitFor({ state: "visible" });
   await page.screenshot({ path: path.join(artifacts, "01b-role.png"), fullPage: false });
 
