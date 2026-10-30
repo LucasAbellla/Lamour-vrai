@@ -96,9 +96,10 @@ try {
   if (await page.locator("#prelude").isVisible()) throw new Error("Sem prelúdio escrito, quem preparou o espaço entra direto.");
   await page.getByText("Pessoa A & Pessoa B", { exact: true }).first().waitFor();
 
-  const headerButtons = page.locator(".topbar button");
-  if (await headerButtons.count() !== 1) throw new Error("O cabeçalho deve manter somente o botão de guardar memória.");
+  const headerButtons = page.locator(".topbar-actions > button");
+  if (await headerButtons.count() !== 1) throw new Error("O cabeçalho deve manter só a rádio e o botão de guardar memória.");
   await page.locator(".topbar").getByRole("button", { name: /Guardar memória/ }).waitFor();
+  await page.locator(".topbar #radio-toggle").waitFor();
   if (await page.locator(".little-things, #notes-grid").count()) throw new Error("A seção Pequenas coisas tuas ainda está presente.");
   const contentOrderIsCorrect = await page.evaluate(() => {
     const dreams = document.querySelector("#futuro");
