@@ -72,6 +72,11 @@ export function setupPwa({ feedback }) {
   updateServiceWorker = registerSW({
     immediate: true,
     onNeedRefresh() {
+      // Na tela de entrada nada está sendo escrito, e o aviso ficaria escondido atrás dela.
+      if (document.body.classList.contains("access-locked")) {
+        void updateServiceWorker?.(true);
+        return;
+      }
       updateBanner.hidden = false;
     },
     onOfflineReady() {
