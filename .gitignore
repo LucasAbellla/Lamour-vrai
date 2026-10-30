@@ -6,3 +6,4 @@ dist/
 .env.*.local
 *.keystore
 tests/artifacts/
+release/

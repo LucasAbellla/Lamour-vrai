@@ -65,9 +65,17 @@ As atualizações não são aplicadas no meio de uma escrita. Quando uma versão
 
 O site ainda não foi publicado nem instalado. A autenticação, sincronização e proteção de fotos estão implementadas; a criação do ambiente privado e os testes com os dois e-mails serão feitos apenas na etapa de ativação.
 
-## Executar no computador
+## App para computador
 
-O Electron continua opcional e sempre usa a versão construída pelo Vite:
+O instalador do Windows abre o site publicado numa janela própria, usando a placa de vídeo. Por isso as correções chegam sozinhas, e nenhuma chave ou conteúdo particular vai dentro dele. Precisa de internet para abrir o cofre.
+
+```bash
+npm run desktop:build
+```
+
+O arquivo sai em `release/Lamour-vrai-Instalador.exe`. Ele não tem assinatura digital, então o Windows avisa na primeira vez: **Mais informações → Executar assim mesmo**.
+
+Para testar a versão local construída pelo Vite, sem instalar:
 
 ```bash
 npm run desktop

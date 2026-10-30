@@ -1,7 +1,7 @@
 import { registerSW } from "virtual:pwa-register";
 
 function isStandalone() {
-  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true || navigator.userAgent.includes("Electron");
 }
 
 export function setupPwa({ feedback }) {

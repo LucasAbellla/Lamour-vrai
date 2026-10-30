@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>L'amour vrai</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; min-height: 100vh; display: grid; place-content: center; gap: 18px; padding: 24px; box-sizing: border-box; text-align: center; background: #0b0709; color: #f6ecee; font: 16px/1.6 Georgia, serif; }
+    h1 { margin: 0; font-size: 2rem; font-weight: 400; }
+    p { margin: 0; max-width: 380px; color: #d9a9b5; }
+    button { justify-self: center; padding: 12px 26px; border: 1px solid #d7475f; border-radius: 999px; background: #7a2338; color: #f6ecee; font: inherit; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Sem conexão por agora</h1>
+  <p>O cofre de vocês precisa de internet para abrir. Confira a conexão e tente de novo.</p>
+  <button type="button" id="retry">Tentar de novo</button>
+  <script>
+    document.querySelector("#retry").addEventListener("click", () => {
+      location.href = new URLSearchParams(location.search).get("site");
+    });
+  </script>
+</body>
+</html>

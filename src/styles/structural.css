@@ -220,3 +220,12 @@ button.text-link { border: 0; }
 @media (prefers-reduced-motion: reduce) {
   .radio.playing .radio-bars i, .radio.asking .radio-pill, .story-modal.from-prelude[open] { animation: none; }
 }
+
+/* Animação fora da tela ou atrás de uma janela aberta fica parada. */
+.offscreen, .offscreen *, .offscreen *::before, .offscreen *::after,
+body.modal-open main *, body.modal-open main *::before, body.modal-open main *::after { animation-play-state: paused !important; }
+
+/* Modo leve: sem aceleração de vídeo, nada de desfoque ao vivo nem animação contínua. */
+.lite .cursor-light, .lite .atmosphere-canvas { display: none; }
+.lite *, .lite *::before, .lite *::after, .lite ::backdrop { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.lite .hero > img, .lite .hero-orbit, .lite .star::before, .lite .star::after, .lite .constellation-lines path, .lite .infinity, .lite .story-backdrop.has-photo { animation: none !important; }
