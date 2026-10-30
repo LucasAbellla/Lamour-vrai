@@ -35,7 +35,6 @@ export function createSecureAuthService(environment) {
   let membership = null;
   let profile = null;
   let repository = null;
-  let pendingFactor = null;
   let initialState = null;
 
   async function getSession() {
@@ -60,45 +59,8 @@ export function createSecureAuthService(environment) {
   async function securityState() {
     const session = await getSession();
     if (!session) return { stage: "signin" };
-    const assurance = ensure(
-      await supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
-      "Não foi possível verificar o segundo fator."
-    );
-    if (assurance.currentLevel === "aal2") {
-      await ensureMembership();
-      return { stage: "vault" };
-    }
-    const factors = ensure(await supabase.auth.mfa.listFactors(), "Não foi possível consultar o segundo fator.");
-    const verified = factors.totp?.find(factor => factor.status === "verified");
-    if (verified) {
-      pendingFactor = { factorId: verified.id };
-      return { stage: "mfa-challenge" };
-    }
-    return { stage: "mfa-enroll" };
-  }
-
-  async function startEnrollment() {
-    if (pendingFactor?.qrCode) return pendingFactor;
-    const enrollment = ensure(await supabase.auth.mfa.enroll({
-      factorType: "totp",
-      friendlyName: "L'amour vrai"
-    }), "Não foi possível preparar o autenticador.");
-    pendingFactor = {
-      factorId: enrollment.id,
-      qrCode: enrollment.totp.qr_code,
-      secret: enrollment.totp.secret
-    };
-    return pendingFactor;
-  }
-
-  async function verifyFactor(code) {
-    if (!pendingFactor?.factorId) throw new Error("Recomece a configuração do segundo fator.");
-    ensure(await supabase.auth.mfa.challengeAndVerify({
-      factorId: pendingFactor.factorId,
-      code: String(code).replace(/\s/g, "")
-    }), "O código não confere.");
-    pendingFactor = null;
     await ensureMembership();
+    return { stage: "vault" };
   }
 
   async function buildRepository(dataKey) {
@@ -154,8 +116,6 @@ export function createSecureAuthService(environment) {
       ensure(await supabase.auth.verifyOtp({ email: normalizedEmail, token, type: "email" }), "O código não confere ou expirou. Peça um novo e-mail.");
     },
     securityState,
-    startEnrollment,
-    verifyFactor,
     async hasAccount() {
       const member = await ensureMembership();
       return Boolean(await fetchVaultConfig(supabase, member.couple_id));

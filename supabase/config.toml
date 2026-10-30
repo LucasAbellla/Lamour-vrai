@@ -17,8 +17,8 @@ double_confirm_changes = true
 max_enrolled_factors = 2
 
 [auth.mfa.totp]
-enroll_enabled = true
-verify_enabled = true
+enroll_enabled = false
+verify_enabled = false
 
 [storage]
 file_size_limit = "20MiB"

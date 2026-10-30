@@ -2,7 +2,7 @@
 
 Um arquivo afetivo particular para guardar memórias, cartas, sonhos e cápsulas do tempo. O projeto combina uma experiência web responsiva com uma versão opcional para computador.
 
-A versão `0.4.0` acrescenta a Fase 3 de privacidade: acesso exclusivo para duas contas, link de uso único, TOTP obrigatório, regras no banco, fotografias privadas e criptografia de ponta a ponta. Ela ainda não foi instalada nos aparelhos: a ativação real ficará para quando o produto estiver completo.
+A versão `0.4.0` acrescenta a Fase 3 de privacidade: acesso exclusivo para duas contas, link de uso único, regras no banco, fotografias privadas e criptografia de ponta a ponta. Ela ainda não foi instalada nos aparelhos: a ativação real ficará para quando o produto estiver completo.
 
 ## Estrutura atual
 
@@ -25,7 +25,7 @@ src/
 └── ui/              feedback, diálogos e movimento
 ```
 
-O conteúdo particular não fica no código-fonte. Em produção, os dados são cifrados no aparelho e o servidor recebe apenas o conteúdo ilegível. O acesso exige uma das duas contas autorizadas, link por e-mail, TOTP e a frase compartilhada do cofre.
+O conteúdo particular não fica no código-fonte. Em produção, os dados são cifrados no aparelho e o servidor recebe apenas o conteúdo ilegível. O acesso exige uma das duas contas autorizadas, o link ou código por e-mail e a frase compartilhada do cofre.
 
 ## Executar no navegador
 
