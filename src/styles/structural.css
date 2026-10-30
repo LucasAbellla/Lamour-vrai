@@ -3,33 +3,32 @@
   z-index: 1000;
   inset: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(360px, .85fr);
+  place-items: center;
   overflow: auto;
+  padding: 24px;
   background: var(--surface-page);
   transition: opacity var(--motion-slow) var(--ease-enter), visibility var(--motion-slow) var(--ease-enter);
 }
 
 .access-gate[hidden] { display: none; }
 .access-gate.leaving { opacity: 0; visibility: hidden; }
-.access-visual { position: relative; min-height: 100vh; overflow: hidden; }
-.access-visual img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.9) brightness(.66); }
-.access-visual::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 30%, rgba(124, 29, 53, .22), transparent 55%), linear-gradient(90deg, transparent 50%, var(--surface-page)), linear-gradient(0deg, var(--surface-page), transparent 45%); }
-.access-visual-copy { position: absolute; z-index: 1; left: clamp(28px, 6vw, 90px); right: 28px; bottom: clamp(42px, 9vh, 110px); max-width: 690px; }
-.access-visual-copy h1 { max-width: 680px; margin-top: 18px; font-size: clamp(3.6rem, 8vw, 7.6rem); }
-.access-visual-copy p:last-child { max-width: 520px; margin-top: 22px; color: var(--text-secondary); font: italic 400 1.3rem/1.55 var(--serif); }
-.access-panel { min-height: 100vh; display: grid; align-content: center; padding: clamp(30px, 7vw, 88px); background: var(--gradient-aurora); }
-.access-brand { display: flex; align-items: center; gap: 13px; margin-bottom: 54px; color: var(--text-primary); }
-.access-brand span:last-child { padding: 0 .12em .06em 0; font: 400 1.9rem/1 var(--script); background: linear-gradient(100deg, var(--color-cream-100), var(--color-blush-200) 60%, var(--accent-gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.access-card { max-width: 520px; }
+.access-gate::before { content: ""; position: fixed; z-index: 1; inset: 0; background: linear-gradient(90deg, rgba(8, 3, 4, .55), rgba(8, 3, 4, .08) 60%); }
+.access-backdrop { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 68% center; }
+.access-panel { position: relative; z-index: 2; width: min(380px, 100%); padding: 32px 30px 30px; border: 1px solid var(--border-subtle); border-radius: var(--radius-card); background: rgba(12, 5, 6, .84); box-shadow: var(--shadow-panel); }
+.access-gate[data-mode="setup"] .access-panel { width: min(560px, 100%); }
+.access-brand { display: grid; justify-items: center; gap: 6px; margin-bottom: 24px; color: var(--text-primary); }
+.access-brand img { width: 84px; height: auto; }
+.access-brand span { padding: 0 .12em .06em 0; font: 400 1.9rem/1 var(--script); background: linear-gradient(100deg, var(--color-cream-100), var(--color-blush-200) 60%, var(--accent-gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .access-card[hidden] { display: none; }
-.access-card h2 { margin-top: 14px; font-size: clamp(2.5rem, 5vw, 4.6rem); }
-.access-card > p:not(.eyebrow) { margin: 18px 0 30px; color: var(--text-secondary); font: italic 400 1.2rem/1.5 var(--serif); }
+.access-card h2 { font-size: 2.1rem; text-align: center; }
+.access-card > p { margin: 10px 0 22px; color: var(--text-secondary); font: italic 400 1.1rem/1.5 var(--serif); text-align: center; }
 .access-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .access-form .full { grid-column: 1 / -1; }
 .access-note { display: flex; gap: 10px; margin-top: 24px; color: var(--text-tertiary); font-size: .72rem; line-height: 1.6; }
 .access-note span { color: var(--accent-gold); }
 .access-form .button { width: 100%; justify-content: center; }
 .form-success { color: #91cda1; font-size: .75rem; line-height: 1.55; }
+.access-form .form-error:empty, .access-form .form-success:empty { display: none; }
 
 .section-heading-actions { display: grid; justify-items: start; gap: 18px; }
 .dream-empty { grid-column: 1 / -1; padding: 54px 24px; border: 1px dashed var(--border-subtle); border-radius: var(--radius-card); text-align: center; }
@@ -39,7 +38,7 @@
 .letter-page .letter-edit { margin-top: 24px; }
 #letter-body { white-space: pre-wrap; }
 
-.install-card { width: min(880px, calc(100vw - 28px)); max-height: calc(100dvh - 28px); overflow-y: auto; position: relative; padding: clamp(34px, 6vw, 72px); border: 1px solid var(--line-strong); border-radius: var(--radius-modal); background: radial-gradient(circle at 18% 0, rgba(215, 71, 95, .16), transparent 34%), var(--surface-2); box-shadow: var(--shadow-modal); }
+.install-card { width: min(880px, calc(100vw - 28px)); max-height: calc(100dvh - 28px); overflow-y: auto; position: relative; padding: clamp(34px, 6vw, 72px); border: 1px solid var(--line-strong); border-radius: var(--radius-modal); background: radial-gradient(circle at 18% 0, rgba(224, 32, 44, .16), transparent 34%), var(--surface-2); box-shadow: var(--shadow-modal); }
 .install-card > h2 { max-width: 680px; margin-top: 15px; font-size: clamp(2.6rem, 6vw, 5.2rem); }
 .install-card > .modal-intro { max-width: 670px; }
 .install-icon { width: 76px; height: 76px; position: absolute; top: clamp(30px, 5vw, 58px); right: clamp(34px, 6vw, 72px); overflow: hidden; border: 1px solid var(--line-strong); border-radius: 22px; box-shadow: var(--glow-lily); }
@@ -51,9 +50,9 @@
 .install-platforms ol { display: grid; gap: 9px; margin: 18px 0 0; padding-left: 20px; color: var(--muted); font-size: .82rem; }
 .install-footnote { margin-bottom: 24px; color: var(--faint); font-size: .7rem; }
 
-.update-banner { position: fixed; z-index: 950; right: 22px; bottom: 22px; width: min(560px, calc(100vw - 32px)); display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 14px; padding: 14px; border: 1px solid var(--line-strong); border-radius: 18px; background: rgba(24, 11, 17, .94); box-shadow: var(--shadow-floating); backdrop-filter: blur(22px); animation: update-enter var(--motion-slow) var(--ease-enter) both; }
+.update-banner { position: fixed; z-index: 950; right: 22px; bottom: 22px; width: min(560px, calc(100vw - 32px)); display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 14px; padding: 14px; border: 1px solid var(--line-strong); border-radius: 18px; background: rgba(26, 9, 11, .94); box-shadow: var(--shadow-floating); backdrop-filter: blur(22px); animation: update-enter var(--motion-slow) var(--ease-enter) both; }
 .update-banner[hidden] { display: none; }
-.update-symbol { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: rgba(215, 71, 95, .12); color: var(--rose); }
+.update-symbol { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: rgba(224, 32, 44, .12); color: var(--rose); }
 .update-banner strong, .update-banner small { display: block; }
 .update-banner strong { font: 400 1rem/1.2 var(--serif); }
 .update-banner small { margin-top: 3px; color: var(--faint); font-size: .64rem; }
@@ -63,17 +62,10 @@
 .is-offline .scroll-progress span { background: linear-gradient(90deg, var(--gold), var(--rose)); }
 
 @media (max-width: 920px) {
-  .access-gate { grid-template-columns: 1fr; }
-  .access-visual { min-height: 42vh; }
-  .access-panel { min-height: auto; }
 }
 
 @media (max-width: 560px) {
-  .access-visual { min-height: 34vh; }
-  .access-visual-copy h1 { font-size: 3.4rem; }
-  .access-visual-copy p:last-child { display: none; }
-  .access-panel { padding: 32px 20px 52px; }
-  .access-brand { margin-bottom: 34px; }
+  .access-panel { padding: 28px 22px 24px; }
   .access-form { grid-template-columns: 1fr; }
   .access-form .full { grid-column: auto; }
   .install-card { padding: 38px 22px 26px; }
@@ -99,7 +91,7 @@
 
 /* Perspectiva: autoria das memórias e das cartas */
 .memory-detail-author { margin: -18px 0 30px; color: var(--accent-gold); font: italic 400 1.08rem/1.3 var(--serif); }
-.letter-switch { display: block; margin-top: 16px; padding: 6px 0; border: 0; background: none; color: #7a2338; font: italic 500 1.08rem/1.35 var(--serif); text-align: left; text-decoration: underline; text-decoration-color: rgba(122, 35, 56, .35); text-underline-offset: 4px; }
+.letter-switch { display: block; margin-top: 16px; padding: 6px 0; border: 0; background: none; color: #80121a; font: italic 500 1.08rem/1.35 var(--serif); text-align: left; text-decoration: underline; text-decoration-color: rgba(128, 18, 26, .35); text-underline-offset: 4px; }
 .letter-switch:hover { text-decoration-color: currentColor; }
 
 @media (max-width: 560px) {
@@ -112,7 +104,7 @@
 /* Prelúdio: "eu te amo" em várias línguas, o nome, frases e assinatura ao abrir o cofre */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 body.prelude-locked { overflow: hidden; }
-.prelude { position: fixed; z-index: 950; inset: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 30%, rgba(92, 26, 46, .5), transparent 60%), radial-gradient(ellipse at 50% 110%, rgba(220, 191, 145, .07), transparent 50%), #070305; opacity: 0; transition: opacity .9s var(--ease-enter); }
+.prelude { position: fixed; z-index: 950; inset: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 30%, rgba(96, 14, 20, .5), transparent 60%), radial-gradient(ellipse at 50% 110%, rgba(220, 191, 145, .07), transparent 50%), #070305; opacity: 0; transition: opacity .9s var(--ease-enter); }
 .prelude.visible { opacity: 1; }
 .prelude.instant { transition: none; }
 .prelude.leaving { opacity: 0; transition-duration: .85s; }
@@ -125,12 +117,12 @@ body.prelude-locked { overflow: hidden; }
 .prelude-signature.written { clip-path: inset(-10% -5% -10% 0); }
 .prelude-content .button { display: flex; margin: 30px auto 0; animation: prelude-rise .9s var(--ease-enter) both; }
 @keyframes prelude-rise { from { opacity: 0; transform: translateY(8px); } }
-.prelude-skip { position: absolute; right: 22px; bottom: 22px; padding: 8px 14px; border: 1px solid var(--border-subtle); border-radius: 999px; background: rgba(14, 7, 10, .5); color: var(--text-tertiary); font-size: .74rem; font-weight: 600; }
+.prelude-skip { position: absolute; right: 22px; bottom: 22px; padding: 8px 14px; border: 1px solid var(--border-subtle); border-radius: 999px; background: rgba(15, 6, 7, .5); color: var(--text-tertiary); font-size: .74rem; font-weight: 600; }
 .prelude-skip:hover { color: var(--text-primary); border-color: var(--border-emphasis); }
 .letter-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; }
 .letter-actions .text-link { border: 0; background: linear-gradient(90deg, var(--accent-soft), transparent) left bottom / 100% 1px no-repeat; }
 .prelude-counter { margin: -8px 0 14px; color: var(--text-tertiary); font-size: .72rem; }
-.prelude-counter.over { color: #f4adbb; }
+.prelude-counter.over { color: #f5aaa2; }
 
 @media (max-width: 560px) {
   .prelude-content { top: 44%; }
@@ -153,12 +145,12 @@ button.text-link { border: 0; }
   .story-backdrop.is-page.has-photo::after { background: linear-gradient(0deg, rgba(7, 4, 5, .92), rgba(7, 4, 5, .74) 55%, rgba(7, 4, 5, .6)); }
 }
 .story-modal.from-prelude[open] { animation: story-from-prelude 1.4s var(--ease-enter) both; }
-.story-modal.from-prelude::backdrop { background: #070405; }
+.story-modal.from-prelude::backdrop { background: #070304; }
 @keyframes story-from-prelude { from { opacity: 0; } to { opacity: 1; } }
 .prelude.handing-off .prelude-sky, .prelude.handing-off .prelude-content, .prelude.handing-off .prelude-skip { opacity: 0; transition: opacity .6s ease; }
 .pages-list { display: grid; gap: 8px; max-height: 250px; margin: 0 0 22px; padding: 0; overflow: auto; list-style: none; }
 .pages-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255, 255, 255, .03); }
-.pages-list li.editing { border-color: rgba(227, 154, 171, .5); background: rgba(215, 71, 95, .07); }
+.pages-list li.editing { border-color: rgba(238, 140, 134, .5); background: rgba(224, 32, 44, .07); }
 .pages-list small { display: block; color: var(--gold); font: 650 .6rem/1.5 var(--sans); letter-spacing: .18em; text-transform: uppercase; }
 .pages-list strong { display: block; margin-top: 3px; font: 500 1.12rem/1.3 var(--serif); }
 .pages-list strong em { font-style: italic; background: var(--gradient-ink); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -166,11 +158,11 @@ button.text-link { border: 0; }
 
 /* Nossa rádio: só as músicas guardadas no cofre, no espírito da rádio do MiFalaro */
 .radio { position: fixed; z-index: 58; left: 18px; bottom: 18px; display: grid; justify-items: start; gap: 10px; }
-.radio-pill { display: inline-flex; align-items: center; gap: 10px; max-width: min(300px, calc(100vw - 36px)); height: 42px; padding: 0 16px 0 14px; border: 1px solid var(--line-strong); border-radius: 999px; background: rgba(20, 9, 14, .86); color: var(--muted); font-size: .78rem; font-weight: 650; box-shadow: 0 14px 40px rgba(0, 0, 0, .4); backdrop-filter: blur(14px); }
+.radio-pill { display: inline-flex; align-items: center; gap: 10px; max-width: min(300px, calc(100vw - 36px)); height: 42px; padding: 0 16px 0 14px; border: 1px solid var(--line-strong); border-radius: 999px; background: rgba(22, 8, 10, .86); color: var(--muted); font-size: .78rem; font-weight: 650; box-shadow: 0 14px 40px rgba(0, 0, 0, .4); backdrop-filter: blur(14px); }
 .radio-pill span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.radio-pill:hover, .radio.playing .radio-pill { border-color: rgba(227, 154, 171, .45); color: var(--cream); }
+.radio-pill:hover, .radio.playing .radio-pill { border-color: rgba(238, 140, 134, .45); color: var(--cream); }
 .radio.asking .radio-pill { border-color: var(--rose); color: var(--cream); animation: radio-ask 1.6s ease-in-out infinite; }
-@keyframes radio-ask { 50% { box-shadow: 0 0 0 6px rgba(215, 71, 95, .2), 0 14px 40px rgba(0, 0, 0, .4); } }
+@keyframes radio-ask { 50% { box-shadow: 0 0 0 6px rgba(224, 32, 44, .2), 0 14px 40px rgba(0, 0, 0, .4); } }
 .radio-bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
 .radio-bars i { width: 3px; height: 30%; border-radius: 2px; background: var(--rose); }
 .radio.playing .radio-bars i { animation: radio-bar .9s ease-in-out infinite alternate; }
@@ -178,7 +170,7 @@ button.text-link { border: 0; }
 .radio.playing .radio-bars i:nth-child(3) { animation-delay: -.2s; }
 .radio.playing .radio-bars i:nth-child(4) { animation-delay: -.65s; }
 @keyframes radio-bar { from { height: 25%; } to { height: 100%; } }
-.radio-panel { display: grid; gap: 12px; width: min(360px, calc(100vw - 24px)); padding: 16px; border: 1px solid var(--line-strong); border-radius: 22px; background: rgba(18, 8, 13, .95); box-shadow: 0 24px 70px rgba(0, 0, 0, .6); backdrop-filter: blur(22px); animation: popup-enter .2s var(--ease-enter) both; }
+.radio-panel { display: grid; gap: 12px; width: min(360px, calc(100vw - 24px)); padding: 16px; border: 1px solid var(--line-strong); border-radius: 22px; background: rgba(20, 7, 9, .95); box-shadow: 0 24px 70px rgba(0, 0, 0, .6); backdrop-filter: blur(22px); animation: popup-enter .2s var(--ease-enter) both; }
 .radio-head { display: flex; align-items: center; justify-content: space-between; }
 .radio-head .eyebrow { margin: 0; }
 .radio-dial { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 14px; background: rgba(0, 0, 0, .3); }
@@ -229,3 +221,9 @@ body.modal-open main *, body.modal-open main *::before, body.modal-open main *::
 .lite .cursor-light, .lite .atmosphere-canvas { display: none; }
 .lite *, .lite *::before, .lite *::after, .lite ::backdrop { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 .lite .hero > img, .lite .hero-orbit, .lite .star::before, .lite .star::after, .lite .constellation-lines path, .lite .infinity, .lite .story-backdrop.has-photo { animation: none !important; }
+
+/* No computador, o cartão fica na parte escura da imagem e as flores aparecem inteiras. */
+@media (min-width: 980px) {
+  .access-gate { justify-items: start; padding-left: clamp(40px, 11vw, 220px); }
+  .access-gate[data-mode="setup"] { padding-left: clamp(24px, 5vw, 90px); }
+}

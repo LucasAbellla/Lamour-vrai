@@ -1,0 +1,36 @@
+# O app abre o site publicado, então só precisa de instalador novo quando o próprio app muda.
+# Cada versão publicada aqui chega sozinha em quem já tem o app instalado.
+name: Instalador do Windows
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - main.js
+      - desktop/**
+      - public/icons/**
+      - package.json
+      - package-lock.json
+      - .github/workflows/desktop.yml
+  workflow_dispatch:
+
+concurrency: instalador
+
+permissions:
+  contents: write
+
+jobs:
+  publicar:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm version "0.5.${{ github.run_number }}" --no-git-tag-version --allow-same-version
+      - run: npx electron-builder --win --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

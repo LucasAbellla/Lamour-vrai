@@ -103,7 +103,7 @@ export function createRadio({ auth, feedback, getProfile, getViewer, library, on
         ? .25 + .75 * Math.abs(Math.sin(now / 420 + bar * .55) * Math.sin(now / 910 + bar * .23))
         : .08 + .04 * Math.sin(bar * .7);
       const barHeight = Math.max(3, level * height);
-      context.fillStyle = `rgba(232, 128, 152, ${playing ? .45 + level * .5 : .3})`;
+      context.fillStyle = `rgba(238, 118, 112, ${playing ? .45 + level * .5 : .3})`;
       context.fillRect(bar * (width / bars) + 1, (height - barHeight) / 2, width / bars - 3, barHeight);
     }
     frame = !panel.hidden && playing ? requestAnimationFrame(drawWave) : 0;

@@ -7,7 +7,7 @@ export function setupAtmosphere() {
   let particles = [];
   let running = true;
   let lastFrame = 0;
-  const colors = ["215,71,95", "217,138,154", "213,183,138", "246,236,238"];
+  const colors = ["224,32,44", "238,118,112", "213,183,138", "246,236,238"];
   const frameTime = 1000 / 30;
 
   const reset = particle => {

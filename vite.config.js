@@ -9,7 +9,6 @@ export default defineConfig({
       registerType: "prompt",
       injectRegister: null,
       includeAssets: [
-        "favicon.svg",
         "apple-touch-icon.png",
         "icons/icon-192.png",
         "icons/icon-512.png",
@@ -26,8 +25,8 @@ export default defineConfig({
         scope: "./",
         display: "standalone",
         display_override: ["window-controls-overlay", "standalone", "minimal-ui"],
-        background_color: "#090507",
-        theme_color: "#0b0709",
+        background_color: "#0b0406",
+        theme_color: "#0c0506",
         categories: ["lifestyle", "photo"],
         prefer_related_applications: false,
         icons: [
@@ -53,7 +52,7 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ["**/*.{html,js,css,png,svg,webmanifest,woff2}"],
+        globPatterns: ["**/*.{html,js,css,png,webp,svg,webmanifest,woff2}"],
         cleanupOutdatedCaches: true,
         clientsClaim: false,
         skipWaiting: false,

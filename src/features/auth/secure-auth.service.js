@@ -106,7 +106,7 @@ export function createSecureAuthService(environment) {
       ensure(await supabase.auth.signInWithOtp({
         email: normalizedEmail,
         options: { shouldCreateUser: false, emailRedirectTo: redirectTo }
-      }), "Não foi possível enviar o link de acesso.");
+      }), "Não foi possível enviar o código de acesso.");
     },
     // O mesmo e-mail traz um código. No app instalado no iPhone o link abre no Safari, então o código é o caminho.
     async verifyEmailCode(email, code) {

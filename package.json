@@ -23,6 +23,10 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.16",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "@fontsource/pinyon-script": "^5.3.0",
+    "@supabase/supabase-js": "^2.117.2",
     "electron": "^44.5.1",
     "electron-builder": "^26.18.0",
     "playwright-core": "^1.63.0",
@@ -31,10 +35,7 @@
     "vite-plugin-pwa": "^2.0.0"
   },
   "dependencies": {
-    "@fontsource-variable/manrope": "^5.3.0",
-    "@fontsource/cormorant-garamond": "^5.3.0",
-    "@fontsource/pinyon-script": "^5.3.0",
-    "@supabase/supabase-js": "^2.117.2"
+    "electron-updater": "^6.8.11"
   },
   "author": "Lucas Abella",
   "build": {
@@ -46,10 +47,14 @@
     },
     "files": [
       "main.js",
-      "desktop/**",
-      "!node_modules/**"
+      "desktop/**"
     ],
-    "electronDist": "node_modules/electron/dist",
+    "publish": {
+      "provider": "github",
+      "owner": "LucasAbellla",
+      "repo": "Lamour-vrai",
+      "releaseType": "release"
+    },
     "win": {
       "target": "nsis",
       "icon": "public/icons/icon-512.png"

@@ -1,5 +1,8 @@
 import { registerSW } from "virtual:pwa-register";
 
+const UPDATE_INTERVAL_MS = 10 * 60 * 1000;
+const UPDATE_FOCUS_PAUSE_MS = 20 * 1000;
+
 function isStandalone() {
   return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true || navigator.userAgent.includes("Electron");
 }
@@ -78,6 +81,19 @@ export function setupPwa({ feedback }) {
         return;
       }
       updateBanner.hidden = false;
+    },
+    // Quem deixa o app aberto também precisa ver a versão nova, sem depender de abrir de novo.
+    onRegisteredSW(_url, registration) {
+      if (!registration) return;
+      let lastCheck = Date.now();
+      const check = () => {
+        lastCheck = Date.now();
+        registration.update().catch(() => {});
+      };
+      setInterval(check, UPDATE_INTERVAL_MS);
+      window.addEventListener("focus", () => {
+        if (Date.now() - lastCheck >= UPDATE_FOCUS_PAUSE_MS) check();
+      });
     },
     onOfflineReady() {
       feedback.toast("Pronto para funcionar mesmo sem internet");
