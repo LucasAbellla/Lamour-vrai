@@ -12,9 +12,9 @@
 
 .access-gate[hidden] { display: none; }
 .access-gate.leaving { opacity: 0; visibility: hidden; }
-.access-gate::before { content: ""; position: fixed; z-index: 1; inset: 0; background: linear-gradient(90deg, rgba(8, 3, 4, .55), rgba(8, 3, 4, .08) 60%); }
+.access-gate::before { content: ""; position: fixed; z-index: 1; inset: 0; background: radial-gradient(ellipse at center, rgba(8, 3, 4, .55), rgba(8, 3, 4, .12) 70%); }
 .access-backdrop { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 68% center; }
-.access-panel { position: relative; z-index: 2; width: min(380px, 100%); padding: 32px 30px 30px; border: 1px solid var(--border-subtle); border-radius: var(--radius-card); background: rgba(12, 5, 6, .84); box-shadow: var(--shadow-panel); }
+.access-panel { position: relative; z-index: 2; width: min(380px, 100%); padding: 32px 30px 30px; border: 1px solid var(--border-subtle); border-radius: var(--radius-card); background: rgba(12, 5, 6, .9); box-shadow: var(--shadow-panel); }
 .access-gate[data-mode="setup"] .access-panel { width: min(560px, 100%); }
 .access-brand { display: grid; justify-items: center; gap: 6px; margin-bottom: 24px; color: var(--text-primary); }
 .access-brand img { width: 84px; height: auto; }
@@ -157,25 +157,28 @@ button.text-link { border: 0; }
 .pages-list .text-link { font-size: .78rem; }
 
 /* Nossa rádio: só as músicas guardadas no cofre, no espírito da rádio do MiFalaro */
-.radio { position: fixed; z-index: 58; left: 18px; bottom: 18px; display: grid; justify-items: start; gap: 10px; }
-.radio-pill { display: inline-flex; align-items: center; gap: 10px; max-width: min(300px, calc(100vw - 36px)); height: 42px; padding: 0 16px 0 14px; border: 1px solid var(--line-strong); border-radius: 999px; background: rgba(22, 8, 10, .86); color: var(--muted); font-size: .78rem; font-weight: 650; box-shadow: 0 14px 40px rgba(0, 0, 0, .4); backdrop-filter: blur(14px); }
+.radio { display: flex; }
+.radio-pill { display: inline-flex; align-items: center; gap: 10px; max-width: 200px; height: 42px; padding: 0 16px 0 14px; border: 1px solid var(--line-strong); border-radius: 999px; background: rgba(22, 8, 10, .86); color: var(--muted); font-size: .78rem; font-weight: 650; }
 .radio-pill span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .radio-pill:hover, .radio.playing .radio-pill { border-color: rgba(238, 140, 134, .45); color: var(--cream); }
 .radio.asking .radio-pill { border-color: var(--rose); color: var(--cream); animation: radio-ask 1.6s ease-in-out infinite; }
-@keyframes radio-ask { 50% { box-shadow: 0 0 0 6px rgba(224, 32, 44, .2), 0 14px 40px rgba(0, 0, 0, .4); } }
+@keyframes radio-ask { 50% { box-shadow: 0 0 0 6px rgba(224, 32, 44, .2); } }
 .radio-bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
-.radio-bars i { width: 3px; height: 30%; border-radius: 2px; background: var(--rose); }
+.radio-bars i { width: 3px; height: 40%; border-radius: 2px; background: var(--rose); }
+.radio-bars i:nth-child(2) { height: 80%; }
+.radio-bars i:nth-child(3) { height: 55%; }
+.radio-bars i:nth-child(4) { height: 100%; }
 .radio.playing .radio-bars i { animation: radio-bar .9s ease-in-out infinite alternate; }
 .radio.playing .radio-bars i:nth-child(2) { animation-delay: -.45s; }
 .radio.playing .radio-bars i:nth-child(3) { animation-delay: -.2s; }
 .radio.playing .radio-bars i:nth-child(4) { animation-delay: -.65s; }
 @keyframes radio-bar { from { height: 25%; } to { height: 100%; } }
-.radio-panel { display: grid; gap: 12px; width: min(360px, calc(100vw - 24px)); padding: 16px; border: 1px solid var(--line-strong); border-radius: 22px; background: rgba(20, 7, 9, .95); box-shadow: 0 24px 70px rgba(0, 0, 0, .6); backdrop-filter: blur(22px); animation: popup-enter .2s var(--ease-enter) both; }
+.radio-panel { position: absolute; top: calc(100% + 10px); right: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; width: min(360px, calc(100vw - 24px)); max-height: calc(100dvh - 110px); overflow: auto; padding: 16px; border: 1px solid var(--line-strong); border-radius: 22px; background: #140709; box-shadow: 0 24px 70px rgba(0, 0, 0, .6); animation: popup-enter .2s var(--ease-enter) both; }
 .radio-head { display: flex; align-items: center; justify-content: space-between; }
 .radio-head .eyebrow { margin: 0; }
 .radio-dial { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 14px; background: rgba(0, 0, 0, .3); }
 .radio-band { color: var(--faint); font: 650 .6rem/1 var(--sans); letter-spacing: .2em; }
-.radio-dial canvas { width: 100%; height: 44px; }
+.radio-dial canvas { min-width: 0; width: 100%; height: 44px; }
 .radio-row { display: flex; align-items: center; gap: 10px; }
 .radio-freq { min-width: 72px; padding: 9px 6px; border-radius: 12px; background: rgba(255, 255, 255, .05); color: var(--gold); font: 600 1.5rem/1 var(--serif); text-align: center; }
 .radio-name { display: grid; flex: 1; gap: 2px; min-width: 0; padding: 8px 12px; border-radius: 12px; background: rgba(255, 255, 255, .04); }
@@ -207,7 +210,15 @@ button.text-link { border: 0; }
 .radio-add .form-error:empty { display: none; }
 .radio-note { margin: 0; color: var(--faint); font-size: .68rem; text-align: center; }
 @media (max-width: 820px) {
-  .radio { left: 12px; bottom: 92px; }
+  .radio-pill { justify-content: center; width: 44px; height: 44px; padding: 0; }
+  #radio-pill-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .radio-panel { max-height: calc(100dvh - 170px); }
+}
+@media (max-width: 380px) {
+  .topbar { gap: 8px; }
+  .brand { gap: 8px; }
+  .brand strong { font-size: 1.3rem; }
+  .brand small { letter-spacing: .12em; }
 }
 @media (prefers-reduced-motion: reduce) {
   .radio.playing .radio-bars i, .radio.asking .radio-pill, .story-modal.from-prelude[open] { animation: none; }
@@ -221,9 +232,3 @@ body.modal-open main *, body.modal-open main *::before, body.modal-open main *::
 .lite .cursor-light, .lite .atmosphere-canvas { display: none; }
 .lite *, .lite *::before, .lite *::after, .lite ::backdrop { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
 .lite .hero > img, .lite .hero-orbit, .lite .star::before, .lite .star::after, .lite .constellation-lines path, .lite .infinity, .lite .story-backdrop.has-photo { animation: none !important; }
-
-/* No computador, o cartão fica na parte escura da imagem e as flores aparecem inteiras. */
-@media (min-width: 980px) {
-  .access-gate { justify-items: start; padding-left: clamp(40px, 11vw, 220px); }
-  .access-gate[data-mode="setup"] { padding-left: clamp(24px, 5vw, 90px); }
-}

@@ -77,6 +77,31 @@
         <span><strong>L'amour vrai</strong><small data-profile="couple-name">Nosso espaço</small></span>
       </a>
       <div class="topbar-actions">
+        <div class="radio" id="radio" hidden>
+          <button class="radio-pill" type="button" id="radio-toggle" aria-expanded="false" aria-controls="radio-panel">
+            <span class="radio-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span id="radio-pill-label">Nossa rádio</span>
+          </button>
+          <section class="radio-panel" id="radio-panel" hidden aria-label="Nossa rádio">
+            <header class="radio-head"><p class="eyebrow">NOSSA RÁDIO</p><button class="radio-icon" type="button" data-close-radio aria-label="Fechar a rádio">×</button></header>
+            <div class="radio-dial"><span class="radio-band">FM</span><canvas id="radio-wave" width="300" height="44" aria-hidden="true"></canvas></div>
+            <div class="radio-row"><div class="radio-freq" id="radio-freq">♥</div><div class="radio-name"><strong id="radio-title">—</strong><small id="radio-artist"></small></div></div>
+            <div class="radio-controls">
+              <button class="radio-icon" type="button" data-radio-step="-1" aria-label="Música anterior">‹</button>
+              <button class="radio-power" type="button" id="radio-play" aria-label="Tocar">▶</button>
+              <button class="radio-icon" type="button" data-radio-step="1" aria-label="Próxima música">›</button>
+              <input type="range" id="radio-volume" min="0" max="1" step="0.02" value="0.7" aria-label="Volume">
+            </div>
+            <ol class="radio-list" id="radio-list" hidden></ol>
+            <form class="radio-add" id="radio-add" hidden>
+              <label class="radio-file"><input name="audio" type="file" accept="audio/*,.mp3,.m4a"><span>＋ Escolher uma música</span></label>
+              <div class="radio-add-fields"><input name="title" maxlength="80" placeholder="Nome da música" aria-label="Nome da música"><input name="artist" maxlength="80" placeholder="Artista" aria-label="Artista"></div>
+              <p class="form-error" id="radio-error" role="alert"></p>
+              <button class="button primary" type="submit">Guardar no cofre</button>
+            </form>
+            <p class="radio-note">Só as músicas escolhidas para vocês, cifradas no cofre.</p>
+          </section>
+        </div>
         <button class="button primary compact" type="button" data-open-memory><span>+</span> Guardar memória</button>
       </div>
     </header>
@@ -539,32 +564,6 @@
     <button class="button primary compact" type="button" id="pwa-update-now">Atualizar agora</button>
     <button class="update-dismiss" type="button" id="pwa-update-later" aria-label="Atualizar depois">×</button>
   </aside>
-
-  <div class="radio" id="radio" hidden>
-    <section class="radio-panel" id="radio-panel" hidden aria-label="Nossa rádio">
-      <header class="radio-head"><p class="eyebrow">NOSSA RÁDIO</p><button class="radio-icon" type="button" data-close-radio aria-label="Fechar a rádio">×</button></header>
-      <div class="radio-dial"><span class="radio-band">FM</span><canvas id="radio-wave" width="300" height="44" aria-hidden="true"></canvas></div>
-      <div class="radio-row"><div class="radio-freq" id="radio-freq">♥</div><div class="radio-name"><strong id="radio-title">—</strong><small id="radio-artist"></small></div></div>
-      <div class="radio-controls">
-        <button class="radio-icon" type="button" data-radio-step="-1" aria-label="Música anterior">‹</button>
-        <button class="radio-power" type="button" id="radio-play" aria-label="Tocar">▶</button>
-        <button class="radio-icon" type="button" data-radio-step="1" aria-label="Próxima música">›</button>
-        <input type="range" id="radio-volume" min="0" max="1" step="0.02" value="0.7" aria-label="Volume">
-      </div>
-      <ol class="radio-list" id="radio-list" hidden></ol>
-      <form class="radio-add" id="radio-add" hidden>
-        <label class="radio-file"><input name="audio" type="file" accept="audio/*,.mp3,.m4a"><span>＋ Escolher uma música</span></label>
-        <div class="radio-add-fields"><input name="title" maxlength="80" placeholder="Nome da música" aria-label="Nome da música"><input name="artist" maxlength="80" placeholder="Artista" aria-label="Artista"></div>
-        <p class="form-error" id="radio-error" role="alert"></p>
-        <button class="button primary" type="submit">Guardar no cofre</button>
-      </form>
-      <p class="radio-note">Só as músicas escolhidas para vocês, cifradas no cofre.</p>
-    </section>
-    <button class="radio-pill" type="button" id="radio-toggle" aria-expanded="false" aria-controls="radio-panel">
-      <span class="radio-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span id="radio-pill-label">Nossa rádio</span>
-    </button>
-  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script type="module" src="/src/main.js"></script>
