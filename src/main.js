@@ -23,6 +23,7 @@ import { createPreludeEditor } from "./features/prelude/prelude-editor.js";
 import { createExperience } from "./features/experience.js";
 import { createFeedback } from "./ui/feedback.js";
 import { setupAtmosphere, setupDynamicMotion, setupRevealAndNavigation } from "./ui/motion.js";
+import { setupPerformance } from "./ui/performance.js";
 import { setupPwa } from "./pwa/pwa.js";
 
 assertEnvironment();
@@ -110,7 +111,7 @@ async function initializePrivateSpace(profile, { resumed = false } = {}) {
 
   if (auth.mode === "secure") {
     const connectionStatus = document.querySelector("#connection-status");
-    if (connectionStatus) connectionStatus.textContent = "Cofre cifrado · 2FA";
+    if (connectionStatus) connectionStatus.textContent = "Cofre cifrado";
     document.querySelector("#saved-note").textContent = "Cifrado antes de sincronizar";
     window.addEventListener("lamour:vault-error", event => {
       feedback.toast(event.detail?.message || "Uma alteração ainda não foi sincronizada");
@@ -120,6 +121,7 @@ async function initializePrivateSpace(profile, { resumed = false } = {}) {
   setupAtmosphere();
   setupDynamicMotion();
   setupRevealAndNavigation();
+  setupPerformance();
   document.documentElement.dataset.environment = environment.name;
 
   // Ao abrir o cofre, o espaço aparece direto. Se houver prelúdio para quem entra, a tela fica escura

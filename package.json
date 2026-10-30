@@ -17,12 +17,14 @@
     "test:story": "node tests/story.mjs",
     "test:db": "node tests/database.mjs",
     "desktop": "npm run build:local && electron .",
+    "desktop:build": "electron-builder --win",
     "start": "npm run desktop",
     "check": "npm run test:security && npm run test:backup && npm run test:story && npm run test:db && npm run build:local && node --check main.js"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.16",
     "electron": "^44.5.1",
+    "electron-builder": "^26.18.0",
     "playwright-core": "^1.63.0",
     "sharp": "^0.35.5",
     "vite": "^7.1.9",
@@ -33,5 +35,32 @@
     "@fontsource/cormorant-garamond": "^5.3.0",
     "@fontsource/pinyon-script": "^5.3.0",
     "@supabase/supabase-js": "^2.117.2"
+  },
+  "author": "Lucas Abella",
+  "build": {
+    "appId": "app.lamourvrai.desktop",
+    "productName": "L'amour vrai",
+    "artifactName": "Lamour-vrai-Instalador.${ext}",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "desktop/**",
+      "!node_modules/**"
+    ],
+    "electronDist": "node_modules/electron/dist",
+    "win": {
+      "target": "nsis",
+      "icon": "public/icons/icon-512.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "shortcutName": "L'amour vrai",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "runAfterFinish": true
+    }
   }
 }
